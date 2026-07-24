@@ -3,571 +3,354 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>大越越的小红书内容工坊</title>
+<title>大越越的小红书素材库</title>
 <style>
-:root {
-  --primary: #ff2442;
-  --primary-light: #ff6b81;
-  --bg: #faf5f5;
-  --card-bg: #ffffff;
-  --text: #1a1a1a;
-  --text-secondary: #666;
-  --border: #f0e0e0;
-  --shadow: 0 4px 20px rgba(255,36,66,0.08);
-  --shadow-hover: 0 8px 30px rgba(255,36,66,0.15);
-  --radius: 16px;
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --accent:#e83149;--accent-light:#fce8eb;
+  --bg:#f8f9fa;--card:#fff;--text:#1a1a1a;--gray:#6c757d;
+  --gray-light:#f1f3f5;--border:#e9ecef;--green:#07c160;
+  --orange:#ff9500;--radius:10px;--shadow:0 2px 8px rgba(0,0,0,0.04);
+  --sidebar-w:220px;
 }
+body{font-family:-apple-system,"PingFang SC","Helvetica Neue",sans-serif;background:var(--bg);color:var(--text);display:flex}
 
-* { margin: 0; padding: 0; box-sizing: border-box; }
+/* Sidebar - white */
+.sidebar{width:var(--sidebar-w);background:#fff;border-right:1px solid var(--border);position:fixed;top:0;left:0;height:100vh;display:flex;flex-direction:column;z-index:100}
+.sidebar-header{padding:20px 16px;border-bottom:1px solid var(--border)}
+.sidebar-header h1{font-size:0.9rem;font-weight:600;color:var(--text)}
+.sidebar-header p{font-size:0.7rem;color:var(--gray);margin-top:3px}
+.sidebar-nav{flex:1;padding:12px 10px}
+.nav-item{display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:8px;cursor:pointer;font-size:0.85rem;color:var(--gray);transition:all 0.15s;margin-bottom:2px}
+.nav-item:hover{background:var(--gray-light);color:var(--text)}
+.nav-item.active{background:var(--accent);color:#fff;font-weight:500}
+.nav-item-icon{font-size:1rem}
+.sidebar-stats{padding:14px 16px;border-top:1px solid var(--border)}
+.sidebar-stat{display:flex;justify-content:space-between;font-size:0.75rem;color:var(--gray);margin-bottom:6px}
+.sidebar-stat span:last-child{font-weight:600;color:var(--text)}
 
-body {
-  font-family: -apple-system, "PingFang SC", "Helvetica Neue", sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  line-height: 1.6;
-}
+.main{margin-left:var(--sidebar-w);flex:1;padding:28px 36px;min-height:100vh}
+.view{display:none}.view.active{display:block}
 
-/* Header */
-.header {
-  background: linear-gradient(135deg, #ff2442 0%, #ff6b81 50%, #ff9a8b 100%);
-  padding: 48px 24px 40px;
-  text-align: center;
-  position: relative;
-  overflow: hidden;
-}
+.sub-tabs{display:flex;gap:6px;margin-bottom:20px}
+.sub-tab{padding:5px 14px;border:1px solid var(--border);background:#fff;border-radius:20px;cursor:pointer;font-size:0.8rem;color:var(--gray)}
+.sub-tab.active{background:var(--accent);color:#fff;border-color:var(--accent)}
 
-.header::before {
-  content: '';
-  position: absolute;
-  top: -50%;
-  right: -10%;
-  width: 300px;
-  height: 300px;
-  background: rgba(255,255,255,0.1);
-  border-radius: 50%;
-}
+/* Card Grid - all same height */
+.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px}
+.card-wrapper{position:relative}
+.card{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;cursor:pointer;transition:transform 0.2s,box-shadow 0.2s;height:420px;display:flex;flex-direction:column}
+.card:hover{transform:translateY(-3px);box-shadow:0 6px 16px rgba(0,0,0,0.08)}
+.card-img{width:100%;aspect-ratio:3/4;object-fit:cover;background:var(--gray-light);display:block;flex-shrink:0;max-height:280px}
+.card-body{padding:8px 10px;flex:1;display:flex;flex-direction:column;overflow:hidden}
+.card-date{font-size:0.6rem;color:var(--accent);background:var(--accent-light);padding:1px 6px;border-radius:6px;display:inline-block;margin-bottom:4px;align-self:flex-start}
+.card-title{font-size:0.75rem;font-weight:600;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:4px}
+.card-tags{display:flex;flex-wrap:wrap;gap:3px;margin-top:auto}
+.card-tag{font-size:0.55rem;color:var(--gray);background:var(--gray-light);padding:1px 5px;border-radius:4px}
+.card-status{position:absolute;top:6px;right:6px;font-size:0.55rem;padding:2px 6px;border-radius:6px;color:#fff}
+.status-draft{background:var(--orange)}.status-published{background:var(--green)}.status-skipped{background:var(--gray)}
 
-.header h1 {
-  color: #fff;
-  font-size: 2rem;
-  font-weight: 700;
-  letter-spacing: 1px;
-  margin-bottom: 8px;
-}
+/* Candidate */
+.candidate-card{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;margin-bottom:20px}
+.candidate-header{padding:14px 18px;border-bottom:1px solid var(--border)}
+.candidate-date{font-size:0.75rem;color:var(--accent);background:var(--accent-light);padding:3px 10px;border-radius:8px}
+.candidate-info{margin:8px 0 4px;font-size:0.82rem}.candidate-info b{color:var(--accent)}
+.candidate-summary{font-size:0.82rem;color:var(--gray)}.candidate-summary b{color:var(--text)}
+.candidate-body{padding:14px 18px;overflow-x:auto}
+.candidate-table{width:100%;font-size:0.82rem;border-collapse:collapse}
+.candidate-table th{text-align:left;padding:8px 10px;background:var(--gray-light);color:var(--gray);font-weight:500;white-space:nowrap}
+.candidate-table td{padding:8px 10px;border-bottom:1px solid var(--border)}
+.candidate-table a{color:var(--accent);text-decoration:none}
+.candidate-selected{background:var(--accent-light)}
+.candidate-logic{margin-top:12px;padding:10px 14px;background:var(--gray-light);border-radius:8px;font-size:0.82rem;line-height:1.6}
+.candidate-logic b{color:var(--accent)}
 
-.header p {
-  color: rgba(255,255,255,0.9);
-  font-size: 0.95rem;
-}
+/* Tracker */
+.tracker{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+.tracker-table{width:100%;border-collapse:collapse;font-size:0.82rem}
+.tracker-table th{text-align:left;padding:10px 14px;background:var(--gray-light);color:var(--gray);font-weight:500}
+.tracker-table td{padding:10px 14px;border-bottom:1px solid var(--border)}
+.tracker-table tr:hover{background:var(--gray-light)}
+.badge{font-size:0.65rem;padding:2px 8px;border-radius:6px;color:#fff}
 
-/* Stats Bar */
-.stats-bar {
-  display: flex;
-  justify-content: center;
-  gap: 32px;
-  padding: 20px 24px;
-  background: #fff;
-  box-shadow: var(--shadow);
-  position: relative;
-  z-index: 1;
-  margin: -20px 24px 0;
-  border-radius: var(--radius);
-  max-width: 900px;
-  margin-left: auto;
-  margin-right: auto;
-}
+/* Modal */
+.modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:200;display:none;justify-content:center;align-items:flex-start;padding:40px 20px;overflow-y:auto}
+.modal-overlay.active{display:flex}
+.modal{background:#fff;border-radius:16px;max-width:820px;width:100%;overflow:hidden;margin-bottom:40px}
+.modal-header{padding:18px 22px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.modal-close{background:none;border:none;font-size:1.3rem;cursor:pointer;color:var(--gray);padding:4px 8px}
+.modal-body{padding:16px 22px}
+.modal-title{font-size:1.1rem;font-weight:600;margin-bottom:0;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.modal-content{font-size:0.9rem;line-height:1.58;white-space:pre-wrap;margin-bottom:10px}
+.modal-tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px}
+.modal-tag{font-size:0.75rem;color:var(--accent);background:var(--accent-light);padding:3px 9px;border-radius:10px}
+.modal-images{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-bottom:12px}
+.modal-images img{width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:6px;cursor:pointer;transition:transform 0.2s}
+.modal-images img:hover{transform:scale(1.05)}
 
-.stat-item {
-  text-align: center;
-}
+/* Action Bar */
+.action-bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding:14px 22px;background:var(--gray-light);border-top:1px solid var(--border)}
+.btn{padding:7px 16px;border-radius:8px;border:none;font-size:0.85rem;cursor:pointer;font-weight:500}
+.btn:hover{opacity:0.85}
+.btn-publish{background:var(--green);color:#fff}
+.btn-skip{background:var(--gray);color:#fff}
+.btn-link{background:var(--accent);color:#fff}
+.btn-copy-small{padding:4px 10px;border-radius:7px;border:none;background:#333;color:#fff;font-size:0.72rem;cursor:pointer;font-weight:500}
+.btn-download{background:#333;color:#fff}
+.link-input{flex:1;min-width:180px;padding:7px 11px;border:1px solid var(--border);border-radius:8px;font-size:0.85rem}
+.reason-input{flex:1;min-width:180px;padding:7px 11px;border:1px solid var(--border);border-radius:8px;font-size:0.85px}
+.reason-section{margin-top:10px}
+.reason-label{font-size:0.8rem;color:var(--gray);margin-bottom:4px}
 
-.stat-num {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--primary);
-}
+.empty{text-align:center;padding:50px 20px;color:var(--gray)}
 
-.stat-label {
-  font-size: 0.8rem;
-  color: var(--text-secondary);
-}
-
-/* Content Container */
-.container {
-  max-width: 900px;
-  margin: 32px auto;
-  padding: 0 24px;
-}
-
-/* Content Card */
-.content-card {
-  background: var(--card-bg);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  overflow: hidden;
-  margin-bottom: 32px;
-  transition: box-shadow 0.3s ease;
-}
-
-.content-card:hover {
-  box-shadow: var(--shadow-hover);
-}
-
-.card-header {
-  padding: 24px 28px 16px;
-  border-bottom: 1px solid var(--border);
-}
-
-.card-date {
-  display: inline-block;
-  font-size: 0.75rem;
-  color: var(--primary);
-  background: rgba(255,36,66,0.08);
-  padding: 4px 12px;
-  border-radius: 20px;
-  margin-bottom: 12px;
-}
-
-.card-title {
-  font-size: 1.3rem;
-  font-weight: 600;
-  color: var(--text);
-  margin-bottom: 8px;
-}
-
-.card-meta {
-  display: flex;
-  gap: 16px;
-  font-size: 0.85rem;
-  color: var(--text-secondary);
-}
-
-.card-meta span {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-/* Card Body */
-.card-body {
-  padding: 24px 28px;
-}
-
-.card-body h3 {
-  font-size: 0.9rem;
-  color: var(--text-secondary);
-  margin-bottom: 8px;
-  font-weight: 500;
-}
-
-.card-body .content-title {
-  font-size: 1.1rem;
-  font-weight: 600;
-  margin: 12px 0;
-  color: var(--text);
-}
-
-.card-body .content-text {
-  font-size: 0.95rem;
-  line-height: 1.8;
-  color: var(--text);
-  white-space: pre-wrap;
-}
-
-/* Tags */
-.tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 16px;
-}
-
-.tag {
-  font-size: 0.8rem;
-  color: var(--primary);
-  background: rgba(255,36,66,0.06);
-  padding: 4px 12px;
-  border-radius: 12px;
-}
-
-/* Images Grid */
-.images-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
-  padding: 0 28px 24px;
-}
-
-.images-grid img {
-  width: 100%;
-  aspect-ratio: 3/4;
-  object-fit: cover;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: transform 0.3s ease;
-}
-
-.images-grid img:hover {
-  transform: scale(1.03);
-}
-
-/* Published Badge */
-.published-badge {
-  display: inline-block;
-  font-size: 0.75rem;
-  color: #fff;
-  background: #22c55e;
-  padding: 3px 10px;
-  border-radius: 12px;
-  margin-left: 8px;
-}
-
-.draft-badge {
-  display: inline-block;
-  font-size: 0.75rem;
-  color: #fff;
-  background: #f59e0b;
-  padding: 3px 10px;
-  border-radius: 12px;
-  margin-left: 8px;
-}
-
-/* Data Tracker Section */
-.tracker-section {
-  background: #fff;
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  padding: 24px 28px;
-  margin-bottom: 32px;
-}
-
-.tracker-section h2 {
-  font-size: 1.1rem;
-  font-weight: 600;
-  margin-bottom: 16px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.tracker-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.85rem;
-}
-
-.tracker-table th {
-  text-align: left;
-  padding: 10px 12px;
-  background: #faf5f5;
-  color: var(--text-secondary);
-  font-weight: 500;
-  border-radius: 6px;
-}
-
-.tracker-table td {
-  padding: 10px 12px;
-  border-bottom: 1px solid var(--border);
-}
-
-.tracker-table tr:hover {
-  background: #faf5f5;
-}
-
-/* Footer */
-.footer {
-  text-align: center;
-  padding: 40px 24px;
-  color: var(--text-secondary);
-  font-size: 0.85rem;
-}
-
-.footer a {
-  color: var(--primary);
-  text-decoration: none;
-}
-
-/* Responsive */
-@media (max-width: 600px) {
-  .images-grid { grid-template-columns: repeat(2, 1fr); }
-  .stats-bar { gap: 16px; }
-  .card-body { padding: 16px 20px; }
-  .images-grid { padding: 0 20px 20px; }
-}
-
-/* Loading skeleton */
-.skeleton {
-  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-  background-size: 200% 100%;
-  animation: loading 1.5s infinite;
-}
-
-@keyframes loading {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
+@media(max-width:768px){
+  .sidebar{width:56px}
+  .sidebar-header h1,.sidebar-header p,.sidebar-stats,.nav-item span:not(.nav-item-icon){display:none}
+  .main{margin-left:56px;padding:20px 16px}
+  .modal-images{grid-template-columns:repeat(2,1fr)}
 }
 </style>
 </head>
 <body>
 
-<div class="header">
-  <h1>📕 大越越的小红书内容工坊</h1>
-  <p>搜索 · 筛选 · 复刻 · 发布 · 数据追踪</p>
-</div>
-
-<div class="stats-bar">
-  <div class="stat-item">
-    <div class="stat-num" id="totalContent">3</div>
-    <div class="stat-label">复刻内容</div>
+<div class="sidebar">
+  <div class="sidebar-header">
+    <h1>📕 大越越素材库</h1>
+    <p>小红书内容工作台</p>
   </div>
-  <div class="stat-item">
-    <div class="stat-num" id="totalImages">26</div>
-    <div class="stat-label">复刻图片</div>
+  <div class="sidebar-nav">
+    <div class="nav-item active" onclick="switchView('content',this)"><span class="nav-item-icon">📕</span><span>笔记素材库</span></div>
+    <div class="nav-item" onclick="switchView('candidates',this)"><span class="nav-item-icon">📊</span><span>候选列表</span></div>
+    <div class="nav-item" onclick="switchView('tracker',this)"><span class="nav-item-icon">📈</span><span>数据追踪</span></div>
   </div>
-  <div class="stat-item">
-    <div class="stat-num" id="publishedCount">3</div>
-    <div class="stat-label">已发布</div>
-  </div>
-  <div class="stat-item">
-    <div class="stat-num" id="totalLikes">8</div>
-    <div class="stat-label">发布后总赞</div>
+  <div class="sidebar-stats">
+    <div class="sidebar-stat"><span>待发布</span><span id="cntDraft">4</span></div>
+    <div class="sidebar-stat"><span>已发布</span><span id="cntPub">2</span></div>
+    <div class="sidebar-stat"><span>总计</span><span id="cntTotal">6</span></div>
   </div>
 </div>
 
-<div class="container" id="contentList">
-  
-  <!-- Content Card 1: 07/20 -->
-  <div class="content-card" id="card-0720">
-    <div class="card-header">
-      <span class="card-date">2026.07.20</span>
-      <span class="published-badge">已发布</span>
-      <h2 class="card-title">上海这9个地方去了会上头</h2>
-      <div class="card-meta">
-        <span>🔗 <a href="https://www.xiaohongshu.com/discovery/item/6a2170320000000035039356" target="_blank" style="color:var(--text-secondary)">原文链接</a></span>
-        <span>📊 评分 97/100</span>
-        <span>🏷️ 城市体验</span>
-      </div>
+<div class="main">
+  <div class="view active" id="view-content">
+    <div class="sub-tabs">
+      <button class="sub-tab active" onclick="filterCards('all',this)">全部</button>
+      <button class="sub-tab" onclick="filterCards('draft',this)">待发布</button>
+      <button class="sub-tab" onclick="filterCards('published',this)">已发布</button>
+      <button class="sub-tab" onclick="filterCards('skipped',this)">已跳过</button>
     </div>
-    <div class="card-body">
-      <h3>📝 复刻正文</h3>
-      <div class="content-text">终于攒够了上海9个宝藏地📍打工人周末就该去这些地方
-
-不是热门打卡点那种，是真的去了会反复想念的那种。
-
-🏠古董花园
-老洋房里的独立咖啡馆，夏天午后一个人坐窗边发呆，时间都慢下来了。满墙旧书和复古绒面椅，连空气都是慵懒的。P1-3
-
-🌿hachi
-梧桐叶铺满整面窗框，秋天去绝了。坐一下午，班味都散了。P4-5
-
-🏛夏衍故居
-上海好看的地方真的不要钱！安静人少，放空圣地。P6
-
-🥖folder
-在街边吃法棍的那一秒，恍惚以为自己在巴黎。路过必进。P7
-
-🏺for long
-古器物空间+好吃马卡龙，审美在线到离谱。约闺蜜去最合适。P8-9
-
-🚪Deep Valley
-需提前预约！但进去就知道值，审美真的绝。P10
-
-☕1691 & CJC
-白天咖啡晚上酒，打工人的快乐老家没跑了。氛围感拿捏死死的。P11-12
-
-🌳何东旧居
-大树从楼里穿出来，满眼绿色，站在底下抬头看的时候真的会被震到。P13-14
-
-📷小乔治
-学校附近的田园咖啡馆，随便拍都出片。P15-16
-
-🍡Sabi 805
-日系小店，甜品饮品风味都很独特，值得专程跑一趟。P17</div>
-      <div class="tags">
-        <span class="tag">#上海citywalk</span>
-        <span class="tag">#上海</span>
-        <span class="tag">#上海探店</span>
-        <span class="tag">#周末去哪儿</span>
-        <span class="tag">#上海旅行</span>
-        <span class="tag">#爱上海的十万个理由</span>
-      </div>
-    </div>
-    <div class="images-grid" id="images-0720">
-      <!-- Images will be loaded here -->
-    </div>
+    <div class="card-grid" id="cardGrid"></div>
   </div>
-
-  <!-- Content Card 2: 07/18 -->
-  <div class="content-card" id="card-0718">
-    <div class="card-header">
-      <span class="card-date">2026.07.18</span>
-      <span class="published-badge">已发布</span>
-      <h2 class="card-title">上海不花钱能待一整天的9个室内遛娃地🫧暑假直接抄</h2>
-      <div class="card-meta">
-        <span>🔗 <a href="https://www.xiaohongshu.com/explore/6a3dc8bc00000000110186b9" target="_blank" style="color:var(--text-secondary)">原文链接</a></span>
-        <span>📊 评分 97/100</span>
-        <span>🏷️ 免费穷游</span>
-      </div>
+  <div class="view" id="view-candidates"><div id="candidateList"></div></div>
+  <div class="view" id="view-tracker">
+    <div class="tracker">
+      <table class="tracker-table">
+        <thead><tr><th>日期</th><th>标题</th><th>状态</th><th>发布链接</th><th>赞</th><th>藏</th><th>评</th><th>更新时间</th></tr></thead>
+        <tbody id="trackerBody"></tbody>
+      </table>
     </div>
-    <div class="card-body">
-      <h3>📝 复刻正文</h3>
-      <div class="content-text">夏天太热不想户外遛娃？又不想花钱？这9个上海免费室内场馆，亲测能待一天，娃玩到不想走，大人也能涨知识📝
-按区域给大家分好了，可以就近选👇
-📍嘉定区
-1️⃣车恋半岛·汽车主题文化馆
-2️⃣大来时间博物馆
-📍杨浦区
-3️⃣世界技能博物馆
-4️⃣中国近现代新闻出版博物馆
-📍浦东新区
-5️⃣上海图书馆东馆
-6️⃣上海博物馆东馆
-📍长宁区
-7️⃣上海消防博物馆
-📍奉贤区
-8️⃣奉贤规划资源展示馆 & 9️⃣奉贤博物馆
-全部0元🆓 暑假直接抄作业就完了！</div>
-      <div class="tags">
-        <span class="tag">#周末去哪儿</span>
-        <span class="tag">#上海遛娃好去处</span>
-        <span class="tag">#上海免费景点</span>
-        <span class="tag">#上海打卡</span>
-        <span class="tag">#暑假遛娃</span>
-      </div>
-    </div>
-  </div>
-
-</div>
-
-<!-- Data Tracker -->
-<div class="container">
-  <div class="tracker-section">
-    <h2>📈 发布数据追踪</h2>
-    <table class="tracker-table" id="trackerTable">
-      <thead>
-        <tr>
-          <th>日期</th>
-          <th>标题</th>
-          <th>状态</th>
-          <th>发布链接</th>
-          <th>赞</th>
-          <th>藏</th>
-          <th>评</th>
-          <th>更新时间</th>
-        </tr>
-      </thead>
-      <tbody id="trackerBody">
-        <tr>
-          <td>07.21</td>
-          <td>上海2h逃岛｜花鸟岛枸杞岛攻略</td>
-          <td><span class="published-badge" style="font-size:0.7rem">已发布</span></td>
-          <td><a href="https://www.xiaohongshu.com/explore/6a5efa56000000000e0374d7" target="_blank" style="color:#ff2442">查看笔记</a></td>
-          <td>8</td>
-          <td>5</td>
-          <td>3</td>
-          <td>07.22</td>
-        </tr>
-        <tr>
-          <td>07.20</td>
-          <td>上海这9个地方去了会上头</td>
-          <td><span class="published-badge" style="font-size:0.7rem">已发布</span></td>
-          <td>待补充</td>
-          <td>—</td>
-          <td>—</td>
-          <td>—</td>
-          <td>07.22</td>
-        </tr>
-        <tr>
-          <td>07.18</td>
-          <td>上海不花钱能待一整天的9个室内遛娃地</td>
-          <td><span class="published-badge" style="font-size:0.7rem">已发布</span></td>
-          <td>待补充</td>
-          <td>—</td>
-          <td>—</td>
-          <td>—</td>
-          <td>07.22</td>
-        </tr>
-      </tbody>
-    </table>
   </div>
 </div>
 
-<div class="footer">
-  <p>🦞 大越越的小红书内容工坊 · 由 GrowClaw 驱动 · <a href="https://www.feishu.cn/docx/E14Yd6mtPoRWI0xDSWDct6RCnLh" target="_blank">飞书文档</a></p>
-</div>
+<div class="modal-overlay" id="modalOverlay" onclick="closeModalOnOverlay(event)"><div class="modal" id="modalContent"></div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 
 <script>
-// Load images for 07/20 card
-const images0720 = [
-  'https://cdn-image.bj.bcebos.com/uploads/2026/07/20/5a3f4882f5ab4710a3ca481a24fc2b42.png',
-  'https://cdn-image.bj.bcebos.com/uploads/2026/07/20/d25277b2523b4346adf7f1b4402d95f1.png',
-  'https://cdn-image.bj.bcebos.com/uploads/2026/07/20/2dd2e49131a14ae0a6f986954d8dea41.png',
-  'https://cdn-image.bj.bcebos.com/uploads/2026/07/20/266b3c85fe5a4c95b50c6493c725dd50.png',
-  'https://cdn-image.bj.bcebos.com/uploads/2026/07/20/ccb789d4_img5.png',
-  'https://cdn-image.bj.bcebos.com/uploads/2026/07/20/f0cf1d9e_img6.png',
-  'https://cdn-image.bj.bcebos.com/uploads/2026/07/20/eaae5646_img7.png',
-  'https://cdn-image.bj.bcebos.com/uploads/2026/07/20/8f1be426_img8.png',
+const contentData=[
+{id:"0724",date:"2026.07.24",title:"上海不花钱遛娃｜11个免费室内宝地",body:`三伏天怕中暑？暴雨天没法出门？借了闺蜜的娃，上海这些免费室内场馆简直是救命稻草🫧
+
+整理了11个地方，博物馆+运动+交通工具全都有，周末直接抄👇
+
+📍博物馆篇
+①奉贤规划馆
+海洋球池+霍比特小屋+积木墙，娃进去就拉不出来
+②上海博物馆东馆
+数字馆沉浸式山水画，探索馆变身小小考古学家
+③新闻出版博物馆
+童声八音盒+端午五彩粽+娃衣DIY，互动项目超多
+④航宇科普中心
+退役真飞机+模拟机舱操作台（儿童免票成人8元）
+⑤中华艺术宫
+暑假都有高质量艺术互动展，小朋友艺术启蒙好去处
+⑥儿童博物馆
+专门为小朋友设计，互动性很强
+
+📍运动阅读篇
+⑦田林街道市民健身中心
+攀爬吊环+篮球+乒乓球，放电绝了
+⑧浦东规划馆
+城市规划展示+城市模型，大一点的小朋友更感兴趣
+⑨少年儿童图书馆
+阅读空间宽敞，泡一下午没问题
+
+🚏交通工具彩蛋
+⑩三港线轮渡
+连接西岸和前滩，人少！两岸风景一次看够
+⑪浦江线
+无人驾驶轻轨，坐第一节看窗景，小朋友兴奋到尖叫
+
+全部0元（航宇成人8块）暑假直接抄作业！`,tags:["#周末去哪儿","#上海遛娃好去处","#上海免费景点","#citywalk","#室内遛娃","#免费遛娃","#暑假遛娃","#上海打卡"],images:["https://cdn-image.bj.bcebos.com/uploads/2026/07/24/3afbcdba047146b79b2494b078aaee0e.png","https://cdn-image.bj.bcebos.com/uploads/2026/07/24/acae79a94b83478f92266bb03c158179.png","https://cdn-image.bj.bcebos.com/uploads/2026/07/24/5bf1a63224794e88a2c10acfa4ac7c21.png","https://cdn-image.bj.bcebos.com/uploads/2026/07/24/68d60b0a692a4c6ab9462a310f400586.png","https://cdn-image.bj.bcebos.com/uploads/2026/07/24/1433c71d0d6b4afb87a4137b8177e7d2.png","https://cdn-image.bj.bcebos.com/uploads/2026/07/24/b5b476a128874cffa20620d4fc0938c3.png"],imgCaptions:["奉贤规划馆·彩色纽扣隧道","上博东馆·数字山水画沉浸展厅","航宇科普中心·模拟机舱体验","中华艺术宫·插画展厅","三港线轮渡·两岸江景","浦江线·无人驾驶轻轨窗景"]},
+{id:"0722",date:"2026.07.22",title:"上海巨富长｜3km逛吃逛玩攻略",body:`打工人周末想逛梧桐区又不想太累？巨富长这条3km真的刚刚好🌿
+
+常熟路站8口出来，沿延庆路华亭路慢慢晃到长乐路，一路梧桐老洋房，走在路上就够治愈了。全程3km，慢慢逛3-4小时，逛吃买一站搞定👇
+
+🛍️逛买篇
+GoodBai在延庆路上，白敬亭的潮牌+咖啡，路过打卡
+Hare Artis手作器具可爱到想全部搬回家
+Melo Mela韩系小杂货，DIY挂件适合闺蜜一起
+Badmarket衣服+小杂物逛起来很上头
+fRUITYSHOP黑胶唱片店氛围感拉满
+Hitable日系侘寂风餐具性价比意外高
+又喜商店少女心饰品进去了出不来
+木木手帐屋在手帐圈子里很有名
+D.ice配饰小众不撞款
+BASEMENT FG三层洋房潮牌店门口Hello Kitty列车太出片
+
+🍜吃饭篇
+旬福食堂咖喱饭分量足，逛累了回血
+叁店黑金卤肉饭+盐酥鸡台式快乐
+野果与山椒贵州菜酸辣开胃
+Plusone咖啡店超chill坐一下午不想走
+尼泊尔餐厅异域风味换换口味
+
+📸必拍
+新乐路老洋房门头+金黄梧桐秋天去绝了
+作家书店在洋房二楼周二休息别跑空
+
+📌Tips
+常熟路站8口进陕西南路站2口出不走回头路
+周末下午人多想拍照建议上午去`,tags:["#上海citywalk","#周末去哪儿","#上海探店","#逛吃全攻略","#巨富长","#城市慢慢游","#上海旅行","#周末去哪玩"],images:["https://cdn-image.bj.bcebos.com/uploads/2026/07/22/3a75cdaabb5648028a02a584ebba056f.png","https://cdn-image.bj.bcebos.com/uploads/2026/07/22/278ea0d4835e424d89729ca6fc17a739.png","https://cdn-image.bj.bcebos.com/uploads/2026/07/22/b835d7e127af499c913205703e953889.png","https://cdn-image.bj.bcebos.com/uploads/2026/07/22/9af06c0e0c5e4f208e52c2862a67608e.png","https://cdn-image.bj.bcebos.com/uploads/2026/07/22/948b4db5f7a742d3bb0a50abff53f6de.png","https://cdn-image.bj.bcebos.com/uploads/2026/07/22/2f28a82f5d41458999aee0d340465a5c.png","https://cdn-image.bj.bcebos.com/uploads/2026/07/22/2bdc1a41bdcf44c89fb904d276e3b601.png","https://cdn-image.bj.bcebos.com/uploads/2026/07/22/aed0b43347dc49299ba17cfda739fbe6.png"],imgCaptions:["封面·巨富长路线概览","手绘路线图","梧桐区街景","手作小店内景","韩系杂货铺","旬福食堂咖喱饭","洋房书店","BASEMENT FG潮牌店"]},
+{id:"0721",date:"2026.07.21",status:"published",publishedAt:"2026-07-21 12:49:26",link:"https://www.xiaohongshu.com/discovery/item/6a5efa56000000000e0374d7",metrics:{likes:11,saves:7,comments:2,shares:4,updatedAt:"2026-07-24 12:18"},title:"上海2h逃岛｜花鸟岛枸杞岛攻略",body:`打工人夏天最想干的事，就是逃到海岛吹海风🌊\n\n上海南浦大桥坐车船联票，大巴+船约3.5h到花鸟岛，《国家地理》都点名的宝藏岛。刚回来，整理给打工人抄作业👇\n\n📅Day1 花鸟岛\n上岛放行李→慢邮局寄明信片给未来的自己→花鸟灯塔蹲日落（观光车20/人，橘色余晖洒白塔上绝了）→南岙沙滩碰运气看蓝眼泪（7-8月概率高）\n住花鸟村，靠码头出行方便，很多民宿能看海\n\n📅Day2 花鸟岛→枸杞岛\n早起佛手石看日出→乘船1h到枸杞岛→山海奇观俯瞰海上牧场（免费！日落绝美）→大王沙滩玩水踩沙→海鲜排档晚餐吹海风\n\n📅Day3 枸杞岛\n东崖绝壁看中国最东日出，悬崖直面太平洋真的震撼→无人村探秘，废弃房屋爬满爬山虎，像绿野仙踪，无人机拍全景超绝\n\n🚢交通Tips\n✅上海南浦大桥买车船联票\n✅花鸟岛→枸杞岛旺季船票紧张，务必提前订！民宿老板能帮忙\n✅大风大雾船班可能取消，关注天气\n\n📸必打卡：慢邮局、花鸟灯塔、佛手石、东崖绝壁、无人村、山海奇观、大王沙滩\n\n⚠️防蚊防晒拉满，岛上海风紫外线不是闹的`,tags:["#周末去哪儿","#旅游攻略","#小众旅行地","#周末去哪玩","#上海周边游","#海岛度假","#我的宝藏小众岛屿","#江浙沪周边游"],images:["https://cdn-image.bj.bcebos.com/uploads/2026/07/21/29a68e741de44ba7a5dbfcebf57fbe50.png","https://cdn-image.bj.bcebos.com/uploads/2026/07/21/3825042c45514d66afbb8818669cca53.png","https://cdn-image.bj.bcebos.com/uploads/2026/07/21/e625ee4f1a954dc1954d409b23b089cb.png","https://cdn-image.bj.bcebos.com/uploads/2026/07/21/33886269949b4f2d8028a96caad6445c.png","https://cdn-image.bj.bcebos.com/uploads/2026/07/21/1db48ae35a604b6dbe11e07a794205bc.png","https://cdn-image.bj.bcebos.com/uploads/2026/07/21/d43e5efc766c4632872006a647e1c9fd.png"],imgCaptions:["花鸟岛全景·封面","花鸟灯塔日落","大王沙滩","东崖绝壁日出","无人村绿野仙踪","枸杞岛渔村全景"]},
+{id:"0720",date:"2026.07.20",status:"published",publishedAt:"2026-07-20 15:44:08",link:"https://www.xiaohongshu.com/discovery/item/6a5dd1c8000000001d021507?app_platform=ios&app_version=9.32.3&share_from_user_hidden=true&xsec_source=app_share&type=normal&xsec_token=CBszt8ThM8uwlyoeUK4-8_C99ESdppaUMR1U2BMSRcxkY=&author_share=1",metrics:{likes:66,saves:97,comments:2,shares:24,updatedAt:"2026-07-24 12:18"},title:"上海这9个地方去了会上头",body:`终于攒够了上海9个宝藏地📍打工人周末就该去这些地方\n\n不是热门打卡点那种，是真的去了会反复想念的那种。\n\n🏠古董花园\n老洋房里的独立咖啡馆，夏天午后一个人坐窗边发呆，时间都慢下来了。满墙旧书和复古绒面椅，连空气都是慵懒的。P1-3\n\n🌿hachi\n梧桐叶铺满整面窗框，秋天去绝了。坐一下午，班味都散了。P4-5\n\n🏛夏衍故居\n上海好看的地方真的不要钱！安静人少，放空圣地。P6\n\n🥖folder\n在街边吃法棍的那一秒，恍惚以为自己在巴黎。路过必进。P7\n\n🏺for long\n古器物空间+好吃马卡龙，审美在线到离谱。约闺蜜去最合适。P8-9\n\n🚪Deep Valley\n需提前预约！但进去就知道值，审美真的绝。P10\n\n☕1691 & CJC\n白天咖啡晚上酒，打工人的快乐老家没跑了。氛围感拿捏死死的。P11-12\n\n🌳何东旧居\n大树从楼里穿出来，满眼绿色，站在底下抬头看的时候真的会被震到。P13-14\n\n📷小乔治\n学校附近的田园咖啡馆，随便拍都出片。P15-16\n\n🍡Sabi 805\n日系小店，甜品饮品风味都很独特，值得专程跑一趟。P17`,tags:["#上海citywalk","#上海","#上海探店","#周末去哪儿","#上海旅行","#爱上海的十万个理由"],images:["https://cdn-image.bj.bcebos.com/uploads/2026/07/20/5a3f4882f5ab4710a3ca481a24fc2b42.png","https://cdn-image.bj.bcebos.com/uploads/2026/07/20/d25277b2523b4346adf7f1b4402d95f1.png","https://cdn-image.bj.bcebos.com/uploads/2026/07/20/2dd2e49131a14ae0a6f986954d8dea41.png","https://cdn-image.bj.bcebos.com/uploads/2026/07/20/266b3c85fe5a4c95b50c6493c725dd50.png","https://cdn-image.bj.bcebos.com/uploads/2026/07/20/8e839508244c4328a38520f4033f3573.png","https://cdn-image.bj.bcebos.com/uploads/2026/07/20/06015e0982c345bc95539accb3367a8f.png","https://cdn-image.bj.bcebos.com/uploads/2026/07/20/6b0271bc20f6435a8f968239f326b9a0.png","https://cdn-image.bj.bcebos.com/uploads/2026/07/20/c7b03314086f49e7aebfc3ffa6072e17.png","https://cdn-image.bj.bcebos.com/uploads/2026/07/20/cd11d5e99d1c428ba3d5e62315bd259a.png","https://cdn-image.bj.bcebos.com/uploads/2026/07/20/d90a87332b75480195672c76befb5c65.png","https://cdn-image.bj.bcebos.com/uploads/2026/07/20/1503de8fe9ef444882c3e8b45d9deef1.png","https://cdn-image.bj.bcebos.com/uploads/2026/07/20/7ecdb1ecedbc43439b3b37acbfb3e80b.png","https://cdn-image.bj.bcebos.com/uploads/2026/07/20/ba9efcd0b4eb4d76aa8f38152a510672.png","https://cdn-image.bj.bcebos.com/uploads/2026/07/20/a5d7e25d62fb40c6960f6e6e18a10a9d.png","https://cdn-image.bj.bcebos.com/uploads/2026/07/20/54828a13e9604e22ab319a614cff2f7a.png","https://cdn-image.bj.bcebos.com/uploads/2026/07/20/033fbfb472b34e31aa6eb4ccb4a290b0.png","https://cdn-image.bj.bcebos.com/uploads/2026/07/20/1838243d79b84dcaa7388122d1dac95d.png"],imgCaptions:["古董花园封面","古董花园内景","古董花园角落","hachi餐食","hachi窗外","夏衍故居","folder复古静物","for long极简室内","for long古器物","Deep Valley","1691&CJC窗边","1691&CJC夜间","何东旧居内景","何东旧居大树","小乔治洋房","小乔治内景","Sabi 805"]},
+{id:"0723",date:"2026.07.23",title:"杭州三天两晚｜不绕路逛吃攻略",body:`打工人的暑假救赎就是逃去杭州吸氧🌿
+高铁半小时到，三天两晚不绕路，抄作业就完事👇
+
+Day1️⃣ 西湖一条龙
+断桥残雪租个自行车→沿白堤慢慢骑到孤山→苏堤走一截→曲院风荷看荷花→三潭印月坐船→雷峰塔拍个远景→太子湾草坪躺平发呆
+⚠️骑行比走路省一半时间，断桥出发顺时针走不回头
+
+Day2️⃣ 寺庙老街
+黄龙体育中心B口坐灵隐专线→飞来峰门票45→灵隐寺香花券30→法喜寺免费初一十五也免→杭州博物馆→南宋御街→河坊街吃逛收尾
+⚠️灵隐寺千万别打车！堵到怀疑人生，公交专线7点就有了
+
+Day3️⃣ 湿地老街
+中国湿地博物馆（免费！先去）→西溪湿地80元→杭州植物园10元→小河直街簪花拍照→拱宸桥看运河→武林夜市收尾
+
+🍜吃什么
+片儿川必吃，蟹黄面推荐龙翔桥附近那几家
+西湖醋鱼……甜腥口感自行斟酌，个人建议换片儿川
+
+📌住宿
+龙翔桥地铁站附近，人均150交通便利，去哪都不远
+
+避坑就一句话：灵隐寺早去、西湖骑车、醋鱼慎点、船选苏堤到茅家埠300元那条`,tags:["#周末去哪儿","#旅游攻略","#杭州旅游","#小众旅行地","#周末去哪玩","#杭州攻略","#暑假旅行","#江浙沪周边游"],images:["https://cdn-image.bj.bcebos.com/uploads/2026/07/23/8f22e44f4b4645c2aa7c83016dcd3120.png","https://cdn-image.bj.bcebos.com/uploads/2026/07/23/91b1d4a28161442cac32832be73bff3d.png","https://cdn-image.bj.bcebos.com/uploads/2026/07/23/d1543409a73541b19068bae4e77cb5bd.png","https://cdn-image.bj.bcebos.com/uploads/2026/07/23/b98a4b6f5a4d45fbb30eeb50fb7d8698.png","https://cdn-image.bj.bcebos.com/uploads/2026/07/23/018b00730dc44443b8c3f458f9aba862.png","https://cdn-image.bj.bcebos.com/uploads/2026/07/23/c9f7c57129aa4286ba7fc08d01d750f2.png","https://cdn-image.bj.bcebos.com/uploads/2026/07/23/d959b6fef8454beab94ac8efc2326292.png","https://cdn-image.bj.bcebos.com/uploads/2026/07/23/b16b7d94b15b44e7af1c4862058b8461.png"],imgCaptions:["封面·杭州三日游路线总览","Day1西湖环线行程图","Day2寺庙老街行程图","Day3湿地老街行程图","寺庙祈福攻略信息卡","杭州美食推荐信息卡","避坑指南信息卡","交通住宿Tips信息卡"]},
+{id:"0718",date:"2026.07.18",title:"上海不花钱能待一整天的9个室内遛娃地🫧暑假直接抄",body:`夏天太热不想户外遛娃？又不想花钱？这9个上海免费室内场馆，亲测能待一天，娃玩到不想走，大人也能涨知识📝\n按区域给大家分好了，可以就近选👇\n\n📍嘉定区\n1️⃣车恋半岛·汽车主题文化馆\n2️⃣大来时间博物馆\n\n📍杨浦区\n3️⃣世界技能博物馆\n4️⃣中国近现代新闻出版博物馆\n\n📍浦东新区\n5️⃣上海图书馆东馆\n6️⃣上海博物馆东馆\n\n📍长宁区\n7️⃣上海消防博物馆\n\n📍奉贤区\n8️⃣奉贤规划资源展示馆 & 9️⃣奉贤博物馆\n\n全部0元🆓 暑假直接抄作业就完了！`,tags:["#周末去哪儿","#上海遛娃好去处","#上海免费景点","#上海打卡","#暑假遛娃"],images:["https://cdn-image.bj.bcebos.com/uploads/2026/07/20/f8735318f1e64031bfaa85a5cf928a1f_720p.webp","https://cdn-image.bj.bcebos.com/uploads/2026/07/20/964c7cbcb68a416dbaee235c60cadcad_720p.webp","https://cdn-image.bj.bcebos.com/uploads/2026/07/20/2610a1896fb54781aab0f8d73234c215_720p.webp","https://cdn-image.bj.bcebos.com/uploads/2026/07/20/5579caa5aec14b81913931b6f27a1b02_720p.webp","https://cdn-image.bj.bcebos.com/uploads/2026/07/20/ecf111e6fa484f06b6d036e59dbd0280_720p.webp","https://cdn-image.bj.bcebos.com/uploads/2026/07/20/1f0256d4416f41258c7044735025bd7a_720p.webp","https://cdn-image.bj.bcebos.com/uploads/2026/07/20/d63cabb3b37c42cb9df7f669275c7833_720p.webp","https://cdn-image.bj.bcebos.com/uploads/2026/07/20/ad231f7652cb4cd0bdd8a32d1477e2fb_720p.webp","https://cdn-image.bj.bcebos.com/uploads/2026/07/20/f2154ee8db7045678db9a5667a721262_720p.webp"],imgCaptions:["车恋半岛","大来时间博物馆","世界技能博物馆","新闻出版博物馆","上海图书馆东馆","上海博物馆东馆","上海消防博物馆","奉贤规划资源展示馆","奉贤博物馆"]},
 ];
 
-const captions = [
-  '古董花园封面', '古董花园内景', '古董花园角落', 'hachi餐食',
-  'hachi窗外', '夏衍故居', 'folder复古静物', 'for long极简室内',
-  'for long古器物', 'Deep Valley', '1691&CJC窗边', '1691&CJC夜间',
-  '何东旧居内景', '何东旧居大树', '小乔治洋房', '小乔治内景', 'Sabi 805'
+const candidateData=[
+{date:"2026.07.24",keywords:["上海Citywalk","上海周末去哪儿","上海免费景点","上海遛娃好去处","周末两天去哪玩","短途旅行攻略","保姆级旅行攻略","抄作业旅行攻略","上海周边游","小众旅行地","暑假去哪玩","夏日避暑","海岛游"],searchCount:361,filteredCount:137,selectedScore:91,notes:[{rank:1,title:"上海最好的地方都是免费的▪️室内遛娃篇🎪",likes:1659,saves:2725,comments:78,url:"https://www.xiaohongshu.com/discovery/item/6a3242ca00000000160256b9",selected:true},{rank:2,title:"免费人少❗这个博物馆太适合遛娃啦，附攻略",likes:2862,saves:4292,comments:328,url:"https://www.xiaohongshu.com/discovery/item/688af1a9000000002302b7a6"},{rank:3,title:"魔都新开4⃣️个必去免费儿童乐园‼️码住",likes:2625,saves:3715,comments:98,url:"https://www.xiaohongshu.com/discovery/item/68138e44000000000900f909"},{rank:4,title:"就为了这24张Live图🌊我要去趟淡季的大连！！",likes:4338,saves:3192,comments:161,url:"https://www.xiaohongshu.com/discovery/item/68d34093000000001101e407"},{rank:5,title:"北方朋友…我很少用“震撼”来形容一个地方‼️",likes:11175,saves:7277,comments:833,url:"https://www.xiaohongshu.com/discovery/item/69dde539000000001d01efbb"},{rank:6,title:"迪士尼刚回，告诉你带娃怎么玩不累",likes:8398,saves:13247,comments:656,url:"https://www.xiaohongshu.com/discovery/item/67ef54f1000000000b01f532"},{rank:7,title:"终于有人把湖北旅游说清楚了❗❓",likes:6900,saves:5946,comments:269,url:"https://www.xiaohongshu.com/discovery/item/680e1e870000000023010c6d"},{rank:8,title:"淮海中路一日游citywalk 宝藏路线🔥",likes:17376,saves:13517,comments:133,url:"https://www.xiaohongshu.com/discovery/item/67dc04a4000000001d021b80"},{rank:9,title:"上海最好的博物馆都是免费免预约的‼附攻略",likes:2162,saves:3823,comments:117,url:"https://www.xiaohongshu.com/discovery/item/68660544000000001202f835"},{rank:10,title:"贵州—荔波—安顺—贵阳不废腿攻略",likes:4012,saves:4910,comments:365,url:"https://www.xiaohongshu.com/discovery/item/6a16d8ff0000000007010df1"}],selectionLogic:"评分91/100。属于'免费穷游'类型，藏赞比1.64（收藏率极高），上海本地免费室内遛娃场馆合集与账号定位高度匹配。原文覆盖11个免费场馆（博物馆+运动+交通工具），信息密度高，客观事实清晰。暑假时效性强，适合7-8月高温/雨季场景。人设可适配：借闺蜜的娃遛，不违规。"},
+{date:"2026.07.22",keywords:["上海Citywalk","上海周末去哪儿","上海免费景点","上海遛娃好去处","周末两天去哪玩","短途旅行攻略","保姆级旅行攻略","抄作业旅行攻略","上海周边游","小众旅行地","暑假去哪玩","夏日避暑","海岛游"],searchCount:282,filteredCount:207,selectedScore:90,notes:[{rank:1,title:"迄今为止，上海我最推荐的一条Citywalk路线",likes:36780,saves:44354,comments:555,url:"https://www.xiaohongshu.com/discovery/item/68df505a0000000003034f62"},{rank:2,title:"上海必逛9大商圈合集‼️跟着逛不踩雷",likes:5834,saves:5398,comments:34,url:"https://www.xiaohongshu.com/discovery/item/686d23ea000000002400fafa"},{rank:3,title:"上海citywalk｜巨富长3km逛吃玩攻略✨",likes:6229,saves:7367,comments:34,url:"https://www.xiaohongshu.com/discovery/item/6913772c000000000402b2c5",selected:true},{rank:4,title:"不输迪士尼！迄今为止最爱的山野乐园出现了…",likes:14238,saves:12899,comments:1161,url:"https://www.xiaohongshu.com/discovery/item/67e2738d0000000209033a74"},{rank:5,title:"免费‼️上海🈶5000㎡乐园+捉螃蟹的宝藏公园‼️",likes:4305,saves:6847,comments:161,url:"https://www.xiaohongshu.com/discovery/item/682342bb000000002100b31c"},{rank:6,title:"🌊苏河湾 citywalk｜必收藏的 4km 精华路线",likes:5388,saves:7664,comments:112,url:"https://www.xiaohongshu.com/discovery/item/69c40869000000001d01c4b6"},{rank:7,title:"徐家汇一日游citywalk路线攻略🌱🌳🍃",likes:10490,saves:10769,comments:109,url:"https://www.xiaohongshu.com/discovery/item/69144e200000000004010347"},{rank:8,title:"人生建议: 拍完这1️⃣8️⃣张照片再离开上海！",likes:14576,saves:16207,comments:191,url:"https://www.xiaohongshu.com/discovery/item/68e39fab0000000004023c2e"},{rank:9,title:"五一来上海，最推荐的2元轮渡航线（附攻略",likes:3251,saves:3964,comments:125,url:"https://www.xiaohongshu.com/discovery/item/680a2866000000000b02e46a"},{rank:10,title:"8所上海最值得去的博物馆 已经next level了",likes:5357,saves:5920,comments:36,url:"https://www.xiaohongshu.com/discovery/item/68c15180000000001c00a942"}],selectionLogic:"评分90/100。属于Citywalk类型，赞藏比1.18（收藏率优秀），上海本地梧桐区citywalk路线与账号定位高度匹配。巨富长（巨鹿路/富民路/长乐路）是上海经典Citywalk区域，21个店铺/餐厅信息密度高，客观事实清晰，表达差异空间大。#1虽分数相同但标题已在seen_notes中，选#3为最佳新候选。"},
+{date:"2026.07.21",keywords:["上海Citywalk","上海周末去哪儿","上海免费景点","上海遛娃好去处","周末两天去哪玩","短途旅行攻略","上海周边游","暑假去哪玩","夏日避暑","小众旅行地"],searchCount:287,filteredCount:204,selectedScore:75,notes:[{rank:1,title:"上海最好的地方都是免费的❗️室内遛娃篇🎪",likes:7201,saves:11567,comments:125,url:"https://www.xiaohongshu.com/discovery/item/6a3dc8bc00000000110186b9"},{rank:2,title:"上海三天两夜｜不绕路版保姆级逛吃攻略",likes:21502,saves:20577,comments:187,url:"https://www.xiaohongshu.com/discovery/item/69b909e70000000021004f6b"},{rank:3,title:"上海周边被《国家地理》推荐的宝藏海岛！真值！",likes:5719,saves:6819,comments:243,url:"https://www.xiaohongshu.com/discovery/item/686cc9af000000000b01da7d",selected:true},{rank:4,title:"上海最好的博物馆都是免费免预约的‼附攻略",likes:4343,saves:7476,comments:236,url:"https://www.xiaohongshu.com/discovery/item/6855f3c40000000015020719"},{rank:5,title:"上海2天1晚📍陆家嘴▶︎外滩 citywalk攻略",likes:5789,saves:4964,comments:73,url:"https://www.xiaohongshu.com/discovery/item/68fadede0000000007000457"},{rank:6,title:"江浙沪徒步宝藏地❗️新年50➕路线闭眼抄作业",likes:15245,saves:26565,comments:490,url:"https://www.xiaohongshu.com/discovery/item/67a41a9b000000001703bb60"},{rank:7,title:"杭州最近的海｜自驾2.5h达两天一夜周末攻略",likes:2560,saves:2339,comments:230,url:"https://www.xiaohongshu.com/discovery/item/68c1594d000000021d004541"},{rank:8,title:"花35元坐936公交从北京直达草原！攻略篇",likes:5031,saves:5146,comments:276,url:"https://www.xiaohongshu.com/discovery/item/6a431bac0000000011013076"},{rank:9,title:"人生建议！！必打卡的9大景点（附上海游玩攻略",likes:5045,saves:2885,comments:85,url:"https://www.xiaohongshu.com/discovery/item/689469bd000000002500ce0b"},{rank:10,title:"亲子徒步⛰️上海1-2h🚗路线合集（新手友好）",likes:1717,saves:3389,comments:131,url:"https://www.xiaohongshu.com/discovery/item/69998039000000000d008236"}],selectionLogic:"评分75/100。属于'路线行程'类型，藏赞比1.19（收藏率极高），上海出发3.5h可达的海岛短线，与账号'上海本地+短途旅行'定位高度匹配。#1和#2虽分数更高但已有候选记录，#3为新发现且夏季时效性强（7-8月蓝眼泪季节），花鸟岛+枸杞岛三天两晚行程客观事实清晰，表达差异空间大。"},
+{date:"2026.07.23",keywords:["上海Citywalk","上海周末去哪儿","上海免费景点","上海遛娃好去处","周末两天去哪玩","短途旅行攻略","上海周边游","小众旅行地","暑假去哪玩","夏日避暑"],searchCount:279,filteredCount:180,selectedScore:87,notes:[{rank:1,title:"杭州三日游保姆级游玩攻略+避坑指南",likes:19429,saves:19860,comments:106,url:"https://www.xiaohongshu.com/discovery/item/687903d6000000001203dbb0",selected:true},{rank:2,title:"窑湖小镇两日一夜攻略",likes:2844,saves:3243,comments:509,url:"https://www.xiaohongshu.com/discovery/item/696201e9000000001a020cd8"},{rank:3,title:"上海一日游｜打卡经典路线（含2元轮渡）",likes:28972,saves:22902,comments:287,url:"https://www.xiaohongshu.com/discovery/item/67fb5b0400000000070363c2"},{rank:4,title:"上海｜不做攻略🟰白来❗️✅美食攻略",likes:9306,saves:10578,comments:152,url:"https://www.xiaohongshu.com/discovery/item/6843b5d4000000000f03b734"},{rank:5,title:"夏季旅游🏄♀️江浙沪周边游好去处❗️周末游",likes:5939,saves:5386,comments:87,url:"https://www.xiaohongshu.com/discovery/item/647de5c0000000001303f042"},{rank:6,title:"上海出发 | 安吉 | 溯溪纳凉 山里吸氧",likes:3885,saves:4092,comments:594,url:"https://www.xiaohongshu.com/discovery/item/687a37ad000000002400e879"},{rank:7,title:"上海人民广场citywalk一日游攻略（附路线）",likes:6279,saves:5026,comments:54,url:"https://www.xiaohongshu.com/discovery/item/689b65c0000000001c00780a"},{rank:8,title:"🚄北京-大同｜两天一夜避暑（旅游）攻略✌️",likes:2252,saves:3012,comments:90,url:"https://www.xiaohongshu.com/discovery/item/688097f0000000002203f274"},{rank:9,title:"上海1.5h｜被严重低估的冷门小城❗️人少景美",likes:3182,saves:4394,comments:132,url:"https://www.xiaohongshu.com/discovery/item/674bc5f0000000020703823e"},{rank:10,title:"迄今为止...我最喜欢的旅游小镇出现了！",likes:24211,saves:19609,comments:531,url:"https://www.xiaohongshu.com/discovery/item/69aa77ba0000000023038dea"}],selectionLogic:"评分87/100。属于'路线行程'类型，藏赞比1.02（收藏率优秀），杭州三天两晚行程与账号'上海本地+短途旅行'定位高度匹配。原文涵盖Day1西湖环线、Day2寺庙老街、Day3湿地老街完整三天行程，信息密度极高（15张手绘攻略图），客观事实清晰（景点/门票/交通/住宿），表达差异空间大。暑假时效性强。"},
+{date:"2026.07.20",keywords:["上海遛娃好去处","上海周末去哪儿","上海周边游"],searchCount:88,filteredCount:65,selectedScore:97,notes:[{rank:1,title:"仿佛在国外的江浙沪staycation 合集",likes:44259,saves:38634,comments:687,url:"https://www.xiaohongshu.com/discovery/item/68a46c4a000000021c019f2c"},{rank:2,title:"上海) 个人觉得无法超越的9️⃣个地方",likes:26668,saves:25342,comments:348,url:"https://www.xiaohongshu.com/discovery/item/6a2170320000000035039356",selected:true},{rank:3,title:"江浙沪徒步宝藏地❗️新年50+路线闭眼抄作业",likes:15243,saves:26565,comments:490,url:"https://www.xiaohongshu.com/discovery/item/67a41a9b0000000217033e5a"},{rank:4,title:"上海是一个巨大的公园▪️合集附定位",likes:29016,saves:17681,comments:807,url:"https://www.xiaohongshu.com/discovery/item/69ae5b340000000016008039"},{rank:5,title:"有娃必看！上海值得逛的23个博物馆",likes:14715,saves:17733,comments:318,url:"https://www.xiaohongshu.com/discovery/item/680e0fdb0000000022027467"},{rank:6,title:"不输迪士尼！迄今为止最爱的山野乐园",likes:14236,saves:12892,comments:1161,url:"https://www.xiaohongshu.com/discovery/item/67e2738d0000000209033a74"},{rank:7,title:"上海迪士尼全部项目测评",likes:17461,saves:16720,comments:184,url:"https://www.xiaohongshu.com/discovery/item/68dbb42a0000000004011c18"},{rank:8,title:"余华没骗我，这是江浙沪最治愈的海边小城",likes:13410,saves:15429,comments:557,url:"https://www.xiaohongshu.com/discovery/item/6856ac6a0000000022033bca"},{rank:9,title:"🎍上海1.5h达｜膝盖友好的牛马必备洗肺指南",likes:7239,saves:12833,comments:440,url:"https://www.xiaohongshu.com/discovery/item/68693f2f0000000220011096"},{rank:10,title:"30个上海最适合亲子的博物馆！",likes:9182,saves:13453,comments:270,url:"https://www.xiaohongshu.com/discovery/item/689c738d000000001c0127a1"}],selectionLogic:"评分97/100排名第一。属于\"城市体验\"类型，赞藏比95%，上海本地咖啡馆/老洋房Citywalk是高频长青方向，与账号定位高度匹配。原文9-10个地点均为上海真实可探访的咖啡馆/空间，客观事实清晰。"},
 ];
 
-// Dynamically load all 17 images
-const grid = document.getElementById('images-0720');
-
-
-// CDN image URLs
-const cdnUrls = {
-  "1": "https://cdn-image.bj.bcebos.com/uploads/2026/07/20/5a3f4882f5ab4710a3ca481a24fc2b42.png",
-  "2": "https://cdn-image.bj.bcebos.com/uploads/2026/07/20/d25277b2523b4346adf7f1b4402d95f1.png",
-  "3": "https://cdn-image.bj.bcebos.com/uploads/2026/07/20/2dd2e49131a14ae0a6f986954d8dea41.png",
-  "4": "https://cdn-image.bj.bcebos.com/uploads/2026/07/20/266b3c85fe5a4c95b50c6493c725dd50.png",
-  "5": "https://cdn-image.bj.bcebos.com/uploads/2026/07/20/8e839508244c4328a38520f4033f3573.png",
-  "6": "https://cdn-image.bj.bcebos.com/uploads/2026/07/20/06015e0982c345bc95539accb3367a8f.png",
-  "7": "https://cdn-image.bj.bcebos.com/uploads/2026/07/20/6b0271bc20f6435a8f968239f326b9a0.png",
-  "8": "https://cdn-image.bj.bcebos.com/uploads/2026/07/20/c7b03314086f49e7aebfc3ffa6072e17.png",
-  "9": "https://cdn-image.bj.bcebos.com/uploads/2026/07/20/cd11d5e99d1c428ba3d5e62315bd259a.png",
-  "10": "https://cdn-image.bj.bcebos.com/uploads/2026/07/20/d90a87332b75480195672c76befb5c65.png",
-  "11": "https://cdn-image.bj.bcebos.com/uploads/2026/07/20/1503de8fe9ef444882c3e8b45d9deef1.png",
-  "12": "https://cdn-image.bj.bcebos.com/uploads/2026/07/20/7ecdb1ecedbc43439b3b37acbfb3e80b.png",
-  "13": "https://cdn-image.bj.bcebos.com/uploads/2026/07/20/ba9efcd0b4eb4d76aa8f38152a510672.png",
-  "14": "https://cdn-image.bj.bcebos.com/uploads/2026/07/20/a5d7e25d62fb40c6960f6e6e18a10a9d.png",
-  "15": "https://cdn-image.bj.bcebos.com/uploads/2026/07/20/54828a13e9604e22ab319a614cff2f7a.png",
-  "16": "https://cdn-image.bj.bcebos.com/uploads/2026/07/20/033fbfb472b34e31aa6eb4ccb4a290b0.png",
-  "17": "https://cdn-image.bj.bcebos.com/uploads/2026/07/20/1838243d79b84dcaa7388122d1dac95d.png"
-};
-
-// Load actual images from CDN
-for (let i = 1; i <= 17; i++) {
-  const img = document.createElement('img');
-  img.src = cdnUrls[i] || cdnUrls[String(i)] || '';
-  img.alt = captions[i-1] || `图片${i}`;
-  img.loading = 'lazy';
-  img.title = captions[i-1] || `图片${i}`;
-  grid.appendChild(img);
+// State with reason
+function loadState(){try{return JSON.parse(localStorage.getItem('xhs_state')||'{}')}catch{return{}}}
+function saveState(s){localStorage.setItem('xhs_state',JSON.stringify(s))}
+function getStatus(id){const s=loadState();const item=contentData.find(d=>d.id===id);return s[id]?.status||item?.status||'draft'}
+function getReason(id){const s=loadState();return s[id]?.reason||''}
+function getPubLink(id){const s=loadState();const item=contentData.find(d=>d.id===id);return s[id]?.link||item?.link||''}
+function setStatusWithReason(id,st,reason){
+  const s=loadState();if(!s[id])s[id]={};
+  s[id].status=st;if(reason)s[id].reason=reason;saveState(s);
+}
+function setPubLink(id,lk,reason){
+  const s=loadState();if(!s[id])s[id]={};
+  s[id].link=lk;if(lk)s[id].status='published';if(reason)s[id].reason=reason;saveState(s);
 }
 
-// Click to view full size
-grid.addEventListener('click', (e) => {
-  if (e.target.tagName === 'IMG') {
-    window.open(e.target.src, '_blank');
+function switchView(view,el){document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));if(el)el.classList.add('active');document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));document.getElementById('view-'+view).classList.add('active');if(view==='candidates')renderCandidates();if(view==='tracker')renderTracker()}
+let currentFilter='all';
+function filterCards(f,el){currentFilter=f;document.querySelectorAll('.sub-tab').forEach(t=>t.classList.remove('active'));if(el)el.classList.add('active');renderCards()}
+
+function renderCards(){const g=document.getElementById('cardGrid');g.innerHTML='';const f=contentData.filter(i=>currentFilter==='all'||getStatus(i.id)===currentFilter);if(!f.length){g.innerHTML='<div class="empty"><p style="font-size:2rem;margin-bottom:8px">📝</p><p>暂无内容</p></div>';return}f.forEach(i=>{const st=getStatus(i.id),img=i.images[0]||'';const b=st==='published'?'<span class="card-status status-published">已发布</span>':st==='skipped'?'<span class="card-status status-skipped">已跳过</span>':'<span class="card-status status-draft">待发布</span>';const c=document.createElement('div');c.className='card-wrapper';c.innerHTML=`${b}<div class="card" onclick="openModal('${i.id}')">${img?`<img class="card-img" src="${img}" loading="lazy">`:'<div class="card-img"></div>'}<div class="card-body"><span class="card-date">${i.date}</span><div class="card-title">${i.title}</div><div class="card-tags">${i.tags.slice(0,3).map(t=>`<span class="card-tag">${t}</span>`).join('')}</div></div></div>`;g.appendChild(c)});updateStats()}
+function updateStats(){let d=0,p=0;contentData.forEach(i=>{const s=getStatus(i.id);if(s==='draft')d++;if(s==='published')p++});document.getElementById('cntDraft').textContent=d;document.getElementById('cntPub').textContent=p;document.getElementById('cntTotal').textContent=contentData.length}
+
+function renderCandidates(){const l=document.getElementById('candidateList');l.innerHTML='';candidateData.forEach(c=>{const cd=document.createElement('div');cd.className='candidate-card';cd.innerHTML=`<div class="candidate-header"><span class="candidate-date">${c.date}</span><div class="candidate-info">🔑 搜索词：<b>${c.keywords.join('、')}</b></div><div class="candidate-summary">共搜索 <b>${c.searchCount}</b> 篇 → 初筛通过 <b>${c.filteredCount}</b> 篇 → 最终选稿评分 <b>${c.selectedScore}</b>/100</div></div><div class="candidate-body"><table class="candidate-table"><thead><tr><th>#</th><th>标题</th><th>赞</th><th>藏</th><th>评</th><th>链接</th></tr></thead><tbody>${c.notes.map(n=>`<tr class="${n.selected?'candidate-selected':''}"><td>${n.rank}${n.selected?' ✅':''}</td><td style="max-width:250px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${n.title}</td><td>${n.likes.toLocaleString()}</td><td>${n.saves.toLocaleString()}</td><td>${n.comments}</td><td><a href="${n.url}" target="_blank">查看</a></td></tr>`).join('')}</tbody></table><div class="candidate-logic"><b>选稿逻辑：</b>${c.selectionLogic}</div></div>`;l.appendChild(cd)})}
+
+function renderTracker(){const tb=document.getElementById('trackerBody');tb.innerHTML='';contentData.forEach(i=>{const st=getStatus(i.id),lk=getPubLink(i.id),reason=getReason(i.id),m=i.metrics||{};const bg=st==='published'?'<span class="badge" style="background:var(--green)">已发布</span>':st==='skipped'?'<span class="badge" style="background:var(--gray)">已跳过</span>':'<span class="badge" style="background:var(--orange)">待发布</span>';tb.innerHTML+=`<tr><td>${i.publishedAt||i.date}</td><td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${i.title}</td><td>${bg}</td><td>${lk?`<a href="${lk}" target="_blank" style="color:var(--accent)">查看</a>`:'—'}</td><td>${m.likes??'—'}</td><td>${m.saves??'—'}</td><td>${m.comments??'—'}</td><td>${m.updatedAt||reason||'—'}</td></tr>`})}
+
+function openModal(id){
+  const i=contentData.find(d=>d.id===id);if(!i)return;
+  const st=getStatus(i.id),lk=getPubLink(i.id),reason=getReason(i.id);
+  const actionSection=st==='published'
+    ? `<div style="width:100%">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+          <span style="color:var(--green);font-weight:600">✅ 已发布</span>
+          ${lk?`<a href="${lk}" target="_blank" style="color:var(--accent);font-size:0.85rem">查看笔记 →</a>`:''}
+          <button class="btn btn-skip" style="margin-left:auto" onclick="setStatusAndRender('${i.id}','draft')">取消发布</button>
+        </div>
+        ${lk?`<div style="margin-top:8px"><input class="link-input" id="linkInput-${i.id}" placeholder="发布链接" value="${lk}"><button class="btn btn-link" style="margin-left:6px" onclick="saveLink('${i.id}')">更新链接</button></div>`:''}
+      </div>`
+    : `<div style="width:100%">
+        <div class="reason-label" style="color:var(--gray);margin-bottom:6px">📝 写上发布/不发布理由（用于优化迭代）</div>
+        <textarea class="link-input" id="reasonInput-${i.id}" placeholder="如：标题太长/图片风格不搭/内容不够实用..." style="width:100%;min-height:60px;resize:vertical;margin-bottom:10px;font-family:inherit">${reason}</textarea>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-publish" onclick="confirmAction('${i.id}','published')">✅ 发布</button>
+          <button class="btn btn-skip" onclick="confirmAction('${i.id}','skipped')">⏭️ 跳过不发</button>
+          <span style="flex:1"></span>
+          ${lk?`<a href="${lk}" target="_blank" style="color:var(--accent);font-size:0.85rem;align-self:center">查看笔记 →</a>`:''}
+        </div>
+      </div>`;
+  document.getElementById('modalContent').innerHTML=`<div class="modal-header"><div><span class="card-date">${i.date}</span><div class="modal-title" style="margin-top:4px"><span>${i.title}</span><button class="btn-copy-small" onclick="copyText('${i.id}')">📋 复制文案</button></div></div><button class="modal-close" onclick="closeModal()">✕</button></div><div class="modal-body"><div class="modal-content">${i.body}</div><div class="modal-tags">${i.tags.map(t=>`<span class="modal-tag">${t}</span>`).join('')}</div>${i.images.length?`<div class="modal-images">${i.images.map((u,idx)=>`<img src="${u}" loading="lazy" alt="${i.imgCaptions[idx]||'图片'+(idx+1)}" onclick="window.open('${u}','_blank')" title="${i.imgCaptions[idx]||'图片'+(idx+1)}">`).join('')}</div>`:'<p style="color:#999;text-align:center;padding:20px">暂无图片</p>'}</div><div class="action-bar"><div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;width:100%"><button class="btn btn-download" onclick="downloadImages('${i.id}')">📥 下载图片(压缩包)</button></div>${actionSection}</div>`;
+  document.getElementById('modalOverlay').classList.add('active');
+}
+
+function confirmAction(id,st){
+  const reason=document.getElementById(`reasonInput-${id}`)?.value||'';
+  setStatusWithReason(id,st,reason);
+  closeModal();renderCards();renderTracker();
+}
+
+function saveLink(id){
+  const lk=document.getElementById(`linkInput-${id}`)?.value||'';
+  const reason=document.getElementById(`reasonInput-${id}`)?.value||'';
+  if(lk){setPubLink(id,lk,reason);closeModal();renderCards();renderTracker();}
+}
+
+// Copy title/body/tags with original line breaks
+async function copyText(id){
+  const item=contentData.find(d=>d.id===id);if(!item)return;
+  const text=`${item.title}\n\n${item.body}\n\n${item.tags.join(' ')}`;
+  const btn=event.target;
+  try{
+    await navigator.clipboard.writeText(text);
+    const old=btn.textContent;btn.textContent='✅ 已复制';
+    setTimeout(()=>btn.textContent=old,1200);
+  }catch(e){
+    const ta=document.createElement('textarea');
+    ta.value=text;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);
+    const old=btn.textContent;btn.textContent='✅ 已复制';
+    setTimeout(()=>btn.textContent=old,1200);
   }
-});
-
-// Update stats
-function updateStats() {
-  const cards = document.querySelectorAll('.content-card');
-  document.getElementById('totalContent').textContent = cards.length;
-  const imgs = grid ? grid.children.length : 0;
-  document.getElementById('totalImages').textContent = imgs + 9; // 17 + 9 from 07/18
 }
 
-updateStats();
-</script>
+// Download pre-packed zip from same origin
+function downloadImages(id){
+  const item=contentData.find(d=>d.id===id);if(!item)return;
+  const a=document.createElement('a');
+  a.href=`./zips/${id}.zip`;
+  a.download=`${id}-${item.title.slice(0,10)}.zip`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
 
+function closeModal(){document.getElementById('modalOverlay').classList.remove('active')}
+function closeModalOnOverlay(e){if(e.target===document.getElementById('modalOverlay'))closeModal()}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
+renderCards();renderTracker();
+</script>
 </body>
 </html>
