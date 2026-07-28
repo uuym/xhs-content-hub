@@ -123,6 +123,7 @@ body{font-family:-apple-system,"PingFang SC","Helvetica Neue",sans-serif;backgro
     <div class="nav-item active" onclick="switchView('content',this)"><span class="nav-item-icon">📕</span><span>笔记素材库</span></div>
     <div class="nav-item" onclick="switchView('candidates',this)"><span class="nav-item-icon">📊</span><span>候选列表</span></div>
     <div class="nav-item" onclick="switchView('tracker',this)"><span class="nav-item-icon">📈</span><span>数据追踪</span></div>
+    <div class="nav-item" onclick="switchView('vault',this)"><span class="nav-item-icon">🔥</span><span>爆文库</span></div>
   </div>
   <div class="sidebar-stats">
     <div class="sidebar-stat"><span>待发布</span><span id="cntDraft">4</span></div>
@@ -149,6 +150,9 @@ body{font-family:-apple-system,"PingFang SC","Helvetica Neue",sans-serif;backgro
         <tbody id="trackerBody"></tbody>
       </table>
     </div>
+  </div>
+  <div class="view" id="view-vault">
+    <div id="vaultList"></div>
   </div>
 </div>
 
@@ -362,8 +366,33 @@ Plusone咖啡店超chill坐一下午不想走
 {id:"0718",date:"2026.07.18",status:"skipped",title:"上海不花钱能待一整天的9个室内遛娃地🫧暑假直接抄",body:`夏天太热不想户外遛娃？又不想花钱？这9个上海免费室内场馆，亲测能待一天，娃玩到不想走，大人也能涨知识📝\n按区域给大家分好了，可以就近选👇\n\n📍嘉定区\n1️⃣车恋半岛·汽车主题文化馆\n2️⃣大来时间博物馆\n\n📍杨浦区\n3️⃣世界技能博物馆\n4️⃣中国近现代新闻出版博物馆\n\n📍浦东新区\n5️⃣上海图书馆东馆\n6️⃣上海博物馆东馆\n\n📍长宁区\n7️⃣上海消防博物馆\n\n📍奉贤区\n8️⃣奉贤规划资源展示馆 & 9️⃣奉贤博物馆\n\n全部0元🆓 暑假直接抄作业就完了！`,tags:["#周末去哪儿","#上海遛娃好去处","#上海免费景点","#上海打卡","#暑假遛娃"],images:["https://cdn-image.bj.bcebos.com/uploads/2026/07/20/f8735318f1e64031bfaa85a5cf928a1f_720p.webp","https://cdn-image.bj.bcebos.com/uploads/2026/07/20/964c7cbcb68a416dbaee235c60cadcad_720p.webp","https://cdn-image.bj.bcebos.com/uploads/2026/07/20/2610a1896fb54781aab0f8d73234c215_720p.webp","https://cdn-image.bj.bcebos.com/uploads/2026/07/20/5579caa5aec14b81913931b6f27a1b02_720p.webp","https://cdn-image.bj.bcebos.com/uploads/2026/07/20/ecf111e6fa484f06b6d036e59dbd0280_720p.webp","https://cdn-image.bj.bcebos.com/uploads/2026/07/20/1f0256d4416f41258c7044735025bd7a_720p.webp","https://cdn-image.bj.bcebos.com/uploads/2026/07/20/d63cabb3b37c42cb9df7f669275c7833_720p.webp","https://cdn-image.bj.bcebos.com/uploads/2026/07/20/ad231f7652cb4cd0bdd8a32d1477e2fb_720p.webp","https://cdn-image.bj.bcebos.com/uploads/2026/07/20/f2154ee8db7045678db9a5667a721262_720p.webp"],imgCaptions:["车恋半岛","大来时间博物馆","世界技能博物馆","新闻出版博物馆","上海图书馆东馆","上海博物馆东馆","上海消防博物馆","奉贤规划资源展示馆","奉贤博物馆"]},
 ];
 
-const candidateData=[{"date": "2026.07.28", "keywords": ["上海Citywalk", "上海周末去哪儿", "上海免费景点", "上海遛娃好去处", "周末两天去哪玩", "短途旅行攻略", "保姆级旅行攻略", "抄作业旅行攻略", "上海周边游", "小众旅行地"], "searchCount": 284, "filteredCount": 10, "selectedScore": 93.4, "notes": [{"rank": 1, "title": "教大家一个国庆假期避开人群的小众旅游方法", "url": "https://www.xiaohongshu.com/discovery/item/68cb9d9e000000001302aef0?app_platform=ios&app_version=9.28.1&share_from_user_hidden=true&xsec_source=app_share&type=normal&xsec_token=CBRQRmmuO7S2KbbuzLKF17ArCnmCR5x0AkDr_ijSGyGZY=&author_share=1", "likes": 14596, "saves": 8957, "comments": 4519, "shares": 4778, "score": 93.9, "selected": false}, {"rank": 2, "title": "上海最好的地方都是免费的", "url": "https://www.xiaohongshu.com/discovery/item/685ce0cd000000001002533d?app_platform=ios&app_version=9.28.1&share_from_user_hidden=true&xsec_source=app_share&type=normal&xsec_token=CB6bcr13WUaAtuUAyCPfU_sR-N9NwcH28j8MSDqj2i8sU=&author_share=1", "likes": 18069, "saves": 10651, "comments": 204, "shares": 3270, "score": 93.8, "selected": true}, {"rank": 3, "title": "香港· 20港币直达小众海岛 都以为在新西兰", "url": "https://www.xiaohongshu.com/discovery/item/67dbb176000000000900f0f2?app_platform=ios&app_version=9.31.2&share_from_user_hidden=true&xsec_source=app_share&type=normal&xsec_token=CB9eCiTJINk30G1L9MHTGxHbhGWWZzk40iK-AOhwzvc7A=&author_share=1", "likes": 10797, "saves": 11448, "comments": 636, "shares": 9656, "score": 93.8, "selected": false}, {"rank": 4, "title": "大家要的简易版格鲁吉亚攻略来啦～✈️", "url": "https://www.xiaohongshu.com/discovery/item/684d5e8d000000002301023a?app_platform=ios&app_version=9.32.2&share_from_user_hidden=true&xsec_source=app_share&type=normal&xsec_token=CBmQuPac2OPW04ms7uNyBfDOoULISrHaY9LCzqWacsCWY=&author_share=1", "likes": 8624, "saves": 11071, "comments": 457, "shares": 5973, "score": 93.1, "selected": false}, {"rank": 5, "title": "上海外滩2元轮渡超详细攻略！（附路线）", "url": "https://www.xiaohongshu.com/discovery/item/697d461b000000001a024fd8?app_platform=ios&app_version=9.30.1&share_from_user_hidden=true&xsec_source=app_share&type=normal&xsec_token=CBxwV-Nu0uL1MQbO0d7XgjF7kmxu9g6sHZfmU16H7wKko=&author_share=1", "likes": 7529, "saves": 8666, "comments": 109, "shares": 3111, "score": 92.2, "selected": false}, {"rank": 6, "title": "安吉｜三日游攻略（悠闲版）", "url": "https://www.xiaohongshu.com/discovery/item/68bd2e4b000000001d02bdeb?app_platform=ios&app_version=9.28.1&share_from_user_hidden=true&xsec_source=app_share&type=normal&xsec_token=CBFZgZ1JZUy7Y-AGuxaNDGZRJ995DN3HJgHtR4XUn_b6I=&author_share=1", "likes": 7124, "saves": 6151, "comments": 239, "shares": 6278, "score": 92.2, "selected": false}, {"rank": 7, "title": "一篇就够了❗上海野生动物园保姆级攻略🐒", "url": "https://www.xiaohongshu.com/discovery/item/6890b5b9000000002301a1aa?app_platform=ios&app_version=9.31.2&share_from_user_hidden=true&xsec_source=app_share&type=normal&xsec_token=CBy1w4ulB76DsXY40uDObVZEEVvirgVla1ybffn3zdtB8=&author_share=1", "likes": 6534, "saves": 7174, "comments": 335, "shares": 4915, "score": 92.1, "selected": false}, {"rank": 8, "title": "上海最好的博物馆都是免费免预约的‼附攻略", "url": "https://www.xiaohongshu.com/discovery/item/6855f3c40000000015020719?app_platform=ios&app_version=9.28.1&share_from_user_hidden=true&xsec_source=app_share&type=normal&xsec_token=CBRRYqf9xBjhccNhhOn_Fd1p2cRL9iRl2b08gjz0ZedcA=&author_share=1", "likes": 4349, "saves": 7483, "comments": 236, "shares": 5089, "score": 91.8, "selected": false}, {"rank": 9, "title": "如何在三伏天更好地使用上海🫠（避暑免费版", "url": "https://www.xiaohongshu.com/discovery/item/6a61f0a7000000000f02a63d?app_platform=ios&app_version=9.32.2&share_from_user_hidden=true&xsec_source=app_share&type=normal&xsec_token=CBxjDKlePWSK4xPjdF2mfe3Y1OPOzJ5-U09JDwi_2ncJU=&author_share=1", "likes": 4997, "saves": 5771, "comments": 85, "shares": 2251, "score": 90.9, "selected": false}, {"rank": 10, "title": "上海出发1.5h🚗这个小众岛屿太适合放空了", "url": "https://www.xiaohongshu.com/discovery/item/69d70dca000000002102ca63?app_platform=ios&app_version=9.31.2&share_from_user_hidden=true&xsec_source=app_share&type=normal&xsec_token=CBAn8ZM9udZP-JmbzaDMAVWOWSK-BcL2h2s0fM-bdc2V4=&author_share=1", "likes": 3846, "saves": 3936, "comments": 332, "shares": 4626, "score": 90.8, "selected": false}], "selectionLogic": "优先选择上海本地、低成本、可实操路线型内容；原文互动数据达标，适合以打工人周末出逃视角复刻为「上海2元轮渡攻略」。"}
+let candidateData=[{"date": "2026.07.28", "keywords": ["上海Citywalk", "上海周末去哪儿", "上海免费景点", "上海遛娃好去处", "周末两天去哪玩", "短途旅行攻略", "保姆级旅行攻略", "抄作业旅行攻略", "上海周边游", "小众旅行地"], "searchCount": 284, "filteredCount": 10, "selectedScore": 93.4, "notes": [{"rank": 1, "title": "教大家一个国庆假期避开人群的小众旅游方法", "url": "https://www.xiaohongshu.com/discovery/item/68cb9d9e000000001302aef0?app_platform=ios&app_version=9.28.1&share_from_user_hidden=true&xsec_source=app_share&type=normal&xsec_token=CBRQRmmuO7S2KbbuzLKF17ArCnmCR5x0AkDr_ijSGyGZY=&author_share=1", "likes": 14596, "saves": 8957, "comments": 4519, "shares": 4778, "score": 93.9, "selected": false}, {"rank": 2, "title": "上海最好的地方都是免费的", "url": "https://www.xiaohongshu.com/discovery/item/685ce0cd000000001002533d?app_platform=ios&app_version=9.28.1&share_from_user_hidden=true&xsec_source=app_share&type=normal&xsec_token=CB6bcr13WUaAtuUAyCPfU_sR-N9NwcH28j8MSDqj2i8sU=&author_share=1", "likes": 18069, "saves": 10651, "comments": 204, "shares": 3270, "score": 93.8, "selected": true}, {"rank": 3, "title": "香港· 20港币直达小众海岛 都以为在新西兰", "url": "https://www.xiaohongshu.com/discovery/item/67dbb176000000000900f0f2?app_platform=ios&app_version=9.31.2&share_from_user_hidden=true&xsec_source=app_share&type=normal&xsec_token=CB9eCiTJINk30G1L9MHTGxHbhGWWZzk40iK-AOhwzvc7A=&author_share=1", "likes": 10797, "saves": 11448, "comments": 636, "shares": 9656, "score": 93.8, "selected": false}, {"rank": 4, "title": "大家要的简易版格鲁吉亚攻略来啦～✈️", "url": "https://www.xiaohongshu.com/discovery/item/684d5e8d000000002301023a?app_platform=ios&app_version=9.32.2&share_from_user_hidden=true&xsec_source=app_share&type=normal&xsec_token=CBmQuPac2OPW04ms7uNyBfDOoULISrHaY9LCzqWacsCWY=&author_share=1", "likes": 8624, "saves": 11071, "comments": 457, "shares": 5973, "score": 93.1, "selected": false}, {"rank": 5, "title": "上海外滩2元轮渡超详细攻略！（附路线）", "url": "https://www.xiaohongshu.com/discovery/item/697d461b000000001a024fd8?app_platform=ios&app_version=9.30.1&share_from_user_hidden=true&xsec_source=app_share&type=normal&xsec_token=CBxwV-Nu0uL1MQbO0d7XgjF7kmxu9g6sHZfmU16H7wKko=&author_share=1", "likes": 7529, "saves": 8666, "comments": 109, "shares": 3111, "score": 92.2, "selected": false}, {"rank": 6, "title": "安吉｜三日游攻略（悠闲版）", "url": "https://www.xiaohongshu.com/discovery/item/68bd2e4b000000001d02bdeb?app_platform=ios&app_version=9.28.1&share_from_user_hidden=true&xsec_source=app_share&type=normal&xsec_token=CBFZgZ1JZUy7Y-AGuxaNDGZRJ995DN3HJgHtR4XUn_b6I=&author_share=1", "likes": 7124, "saves": 6151, "comments": 239, "shares": 6278, "score": 92.2, "selected": false}, {"rank": 7, "title": "一篇就够了❗上海野生动物园保姆级攻略🐒", "url": "https://www.xiaohongshu.com/discovery/item/6890b5b9000000002301a1aa?app_platform=ios&app_version=9.31.2&share_from_user_hidden=true&xsec_source=app_share&type=normal&xsec_token=CBy1w4ulB76DsXY40uDObVZEEVvirgVla1ybffn3zdtB8=&author_share=1", "likes": 6534, "saves": 7174, "comments": 335, "shares": 4915, "score": 92.1, "selected": false}, {"rank": 8, "title": "上海最好的博物馆都是免费免预约的‼附攻略", "url": "https://www.xiaohongshu.com/discovery/item/6855f3c40000000015020719?app_platform=ios&app_version=9.28.1&share_from_user_hidden=true&xsec_source=app_share&type=normal&xsec_token=CBRRYqf9xBjhccNhhOn_Fd1p2cRL9iRl2b08gjz0ZedcA=&author_share=1", "likes": 4349, "saves": 7483, "comments": 236, "shares": 5089, "score": 91.8, "selected": false}, {"rank": 9, "title": "如何在三伏天更好地使用上海🫠（避暑免费版", "url": "https://www.xiaohongshu.com/discovery/item/6a61f0a7000000000f02a63d?app_platform=ios&app_version=9.32.2&share_from_user_hidden=true&xsec_source=app_share&type=normal&xsec_token=CBxjDKlePWSK4xPjdF2mfe3Y1OPOzJ5-U09JDwi_2ncJU=&author_share=1", "likes": 4997, "saves": 5771, "comments": 85, "shares": 2251, "score": 90.9, "selected": false}, {"rank": 10, "title": "上海出发1.5h🚗这个小众岛屿太适合放空了", "url": "https://www.xiaohongshu.com/discovery/item/69d70dca000000002102ca63?app_platform=ios&app_version=9.31.2&share_from_user_hidden=true&xsec_source=app_share&type=normal&xsec_token=CBAn8ZM9udZP-JmbzaDMAVWOWSK-BcL2h2s0fM-bdc2V4=&author_share=1", "likes": 3846, "saves": 3936, "comments": 332, "shares": 4626, "score": 90.8, "selected": false}], "selectionLogic": "优先选择上海本地、低成本、可实操路线型内容；原文互动数据达标，适合以打工人周末出逃视角复刻为「上海2元轮渡攻略」。"}
 ];
+function loadCandidateHistory(){
+  try {
+    const hist = JSON.parse(localStorage.getItem('xhs_candidates') || '[]');
+    const existingDates = candidateData.map(c => c.date);
+    hist.forEach(h => {
+      if (!existingDates.includes(h.date)) {
+        candidateData.unshift(h);
+      }
+    });
+    const now = new Date();
+    const cutoff = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+    const filtered = candidateData.filter(c => {
+      const d = new Date(c.date.replace(/\./g, '/'));
+      return d > cutoff;
+    });
+    candidateData.length = 0;
+    filtered.forEach(f => candidateData.push(f));
+  } catch(e) { console.warn('Failed to load candidate history:', e); }
+}
+function saveCandidateHistory(){
+  try {
+    localStorage.setItem('xhs_candidates', JSON.stringify(candidateData));
+  } catch(e) { console.warn('Failed to save candidate history:', e); }
+}
+loadCandidateHistory();
 
 // State with reason
 function loadState(){try{return JSON.parse(localStorage.getItem('xhs_state')||'{}')}catch{return{}}}
@@ -380,14 +409,92 @@ function setPubLink(id,lk,reason){
   s[id].link=lk;if(lk)s[id].status='published';if(reason)s[id].reason=reason;saveState(s);
 }
 
-function switchView(view,el){document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));if(el)el.classList.add('active');document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));document.getElementById('view-'+view).classList.add('active');if(view==='candidates')renderCandidates();if(view==='tracker')renderTracker()}
+function switchView(view,el){document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));if(el)el.classList.add('active');document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));document.getElementById('view-'+view).classList.add('active');if(view==='candidates')renderCandidates();if(view==='tracker')renderTracker();if(view==='vault')renderVault()}
 let currentFilter='all';
 function filterCards(f,el){currentFilter=f;document.querySelectorAll('.sub-tab').forEach(t=>t.classList.remove('active'));if(el)el.classList.add('active');renderCards()}
 
 function renderCards(){const g=document.getElementById('cardGrid');g.innerHTML='';const f=contentData.filter(i=>currentFilter==='all'||getStatus(i.id)===currentFilter);if(!f.length){g.innerHTML='<div class="empty"><p style="font-size:2rem;margin-bottom:8px">📝</p><p>暂无内容</p></div>';return}f.forEach(i=>{const st=getStatus(i.id),img=i.images[0]||'';const b=st==='published'?'<span class="card-status status-published">已发布</span>':st==='skipped'?'<span class="card-status status-skipped">已跳过</span>':'<span class="card-status status-draft">待发布</span>';const c=document.createElement('div');c.className='card-wrapper';c.innerHTML=`${b}<div class="card" onclick="openModal('${i.id}')">${img?`<img class="card-img" src="${img}" loading="lazy">`:'<div class="card-img"></div>'}<div class="card-body"><span class="card-date">${i.date}</span><div class="card-title">${i.title}</div><div class="card-tags">${i.tags.slice(0,3).map(t=>`<span class="card-tag">${t}</span>`).join('')}</div></div></div>`;g.appendChild(c)});updateStats()}
 function updateStats(){let d=0,p=0;contentData.forEach(i=>{const s=getStatus(i.id);if(s==='draft')d++;if(s==='published')p++});document.getElementById('cntDraft').textContent=d;document.getElementById('cntPub').textContent=p;document.getElementById('cntTotal').textContent=contentData.length}
 
-function renderCandidates(){const l=document.getElementById('candidateList');l.innerHTML='';candidateData.forEach(c=>{const cd=document.createElement('div');cd.className='candidate-card';cd.innerHTML=`<div class="candidate-header"><span class="candidate-date">${c.date}</span><div class="candidate-info">🔑 搜索词：<b>${c.keywords.join('、')}</b></div><div class="candidate-summary">共搜索 <b>${c.searchCount}</b> 篇 → 初筛通过 <b>${c.filteredCount}</b> 篇 → 最终选稿评分 <b>${c.selectedScore}</b>/100</div></div><div class="candidate-body"><table class="candidate-table"><thead><tr><th>#</th><th>标题</th><th>赞</th><th>藏</th><th>评</th><th>链接</th></tr></thead><tbody>${c.notes.map(n=>`<tr class="${n.selected?'candidate-selected':''}"><td>${n.rank}${n.selected?' ✅':''}</td><td style="max-width:250px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${n.title}</td><td>${n.likes.toLocaleString()}</td><td>${n.saves.toLocaleString()}</td><td>${n.comments}</td><td><a href="${n.url}" target="_blank">查看</a></td></tr>`).join('')}</tbody></table><div class="candidate-logic"><b>选稿逻辑：</b>${c.selectionLogic}</div></div>`;l.appendChild(cd)})}
+function renderCandidates(){
+  loadCandidateHistory();
+  saveCandidateHistory();
+  const l=document.getElementById('candidateList');l.innerHTML='';
+  const vault = JSON.parse(localStorage.getItem('xhs_vault') || '[]');
+  candidateData.forEach(c=>{
+    const cd=document.createElement('div');
+    cd.className='candidate-card';
+    cd.innerHTML=`<div class="candidate-header">
+      <span class="candidate-date">${c.date}</span>
+      <div class="candidate-info">🔑 搜索词：<b>${c.keywords.join('、')}</b></div>
+      <div class="candidate-summary">共搜索 <b>${c.searchCount}</b> 篇 → 初筛通过 <b>${c.filteredCount}</b> 篇 → 最终选稿评分 <b>${c.selectedScore}</b>/100</div>
+    </div>
+    <div class="candidate-body">
+      <table class="candidate-table">
+        <thead><tr><th>#</th><th>标题</th><th>赞</th><th>藏</th><th>评</th><th>链接</th><th>爆文库</th></tr></thead>
+        <tbody>${c.notes.map(n=>{
+          const inVault = vault.some(v => v.url === n.url);
+          return `<tr class="${n.selected?'candidate-selected':''}">
+            <td>${n.rank}${n.selected?' ✅':''}</td>
+            <td style="max-width:250px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${n.title}</td>
+            <td>${n.likes.toLocaleString()}</td>
+            <td>${n.saves.toLocaleString()}</td>
+            <td>${n.comments}</td>
+            <td><a href="${n.url}" target="_blank">查看</a></td>
+            <td>${inVault 
+              ? '<span style="color:var(--green);font-size:0.85rem">✅ 已加入</span>' 
+              : `<button class="btn-vault" onclick="addToVault('${n.url}','${n.title.replace(/'/g,"\\'")}',${n.likes},${n.saves},${n.comments},'${c.date}')" style="padding:4px 10px;font-size:0.8rem;border:1px solid var(--accent);background:transparent;color:var(--accent);border-radius:6px;cursor:pointer;white-space:nowrap">🔥 加入爆文库</button>`
+            }</td>
+          </tr>`;
+        }).join('')}</tbody>
+      </table>
+      <div class="candidate-logic"><b>选稿逻辑：</b>${c.selectionLogic}</div>
+    </div>`;
+    l.appendChild(cd);
+  });
+}
+
+function addToVault(url, title, likes, saves, comments, date){
+  const vault = JSON.parse(localStorage.getItem('xhs_vault') || '[]');
+  if(!vault.some(v => v.url === url)){
+    vault.push({url, title, likes, saves, comments, date, addedAt: new Date().toISOString()});
+    localStorage.setItem('xhs_vault', JSON.stringify(vault));
+  }
+  renderCandidates();
+}
+
+function renderVault(){
+  const vault = JSON.parse(localStorage.getItem('xhs_vault') || '[]');
+  const l = document.getElementById('vaultList');
+  if(!vault.length){
+    l.innerHTML = '<div class="empty"><p style="font-size:2rem;margin-bottom:8px">🔥</p><p>爆文库还是空的</p><p style="font-size:0.85rem;color:var(--gray);margin-top:8px">在候选列表中点击「加入爆文库」按钮来添加</p></div>';
+    return;
+  }
+  l.innerHTML = `<div style="margin-bottom:16px;color:var(--gray);font-size:0.9rem">共 ${vault.length} 篇 · cron 任务会优先从爆文库中选题复刻</div>`;
+  vault.forEach((v, i) => {
+    const card = document.createElement('div');
+    card.className = 'candidate-card';
+    card.innerHTML = `<div class="candidate-header">
+      <span class="candidate-date">加入于 ${v.addedAt ? v.addedAt.slice(0,10) : v.date}</span>
+      <div class="candidate-info"><b>${v.title}</b></div>
+      <div class="candidate-summary">赞 ${v.likes?.toLocaleString() || '—'} · 藏 ${v.saves?.toLocaleString() || '—'} · 评 ${v.comments || '—'}</div>
+    </div>
+    <div class="candidate-body" style="display:flex;align-items:center;gap:12px">
+      <a href="${v.url}" target="_blank" style="color:var(--accent)">查看原笔记 →</a>
+      <button class="btn btn-skip" style="margin-left:auto" onclick="removeFromVault(${i})">移除</button>
+    </div>`;
+    l.appendChild(card);
+  });
+}
+
+function removeFromVault(index){
+  const vault = JSON.parse(localStorage.getItem('xhs_vault') || '[]');
+  vault.splice(index, 1);
+  localStorage.setItem('xhs_vault', JSON.stringify(vault));
+  renderVault();
+}
+
+renderCards();renderTracker();
 
 function renderTracker(){const tb=document.getElementById('trackerBody');tb.innerHTML='';contentData.forEach(i=>{const st=getStatus(i.id),lk=getPubLink(i.id),reason=getReason(i.id),m=i.metrics||{};const bg=st==='published'?'<span class="badge" style="background:var(--green)">已发布</span>':st==='skipped'?'<span class="badge" style="background:var(--gray)">已跳过</span>':'<span class="badge" style="background:var(--orange)">待发布</span>';tb.innerHTML+=`<tr><td>${i.publishedAt||i.date}</td><td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${i.title}</td><td>${bg}</td><td>${lk?`<a href="${lk}" target="_blank" style="color:var(--accent)">查看</a>`:'—'}</td><td>${m.likes??'—'}</td><td>${m.saves??'—'}</td><td>${m.comments??'—'}</td><td>${m.updatedAt||reason||'—'}</td></tr>`})}
 
