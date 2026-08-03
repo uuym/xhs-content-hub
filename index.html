@@ -601,20 +601,33 @@ function renderCandidates(){
     </div>
     <div class="candidate-body">
       <table class="candidate-table">
-        <thead><tr><th>#</th><th>标题</th><th>赞</th><th>藏</th><th>评</th><th>链接</th><th>爆文库</th></tr></thead>
+        <thead><tr><th>#</th><th>标题</th><th>赞</th><th>藏</th><th>评</th><th>链接</th><th>操作</th></tr></thead>
         <tbody>${c.notes.map(n=>{
           const inVault = vault.some(v => v.url === n.url);
+          const feedback = JSON.parse(localStorage.getItem('xhs_feedback') || '[]');
+          const fb = feedback.find(f => f.url === n.url);
+          const isPublished = contentData.some(d => d.title && n.title && (d.title.includes(n.title.slice(0,8)) || n.title.includes(d.title.slice(0,8))));
+          let actionCell;
+          if(isPublished){
+            actionCell = '<span style="color:var(--green);font-size:0.85rem">📋 已出稿</span>';
+          } else if(inVault){
+            actionCell = '<span style="color:var(--green);font-size:0.85rem">✅ 已加入</span>';
+          } else if(fb){
+            actionCell = `<span style="color:var(--gray);font-size:0.85rem" title="${fb.reason}">🚫 已跳过</span>`;
+          } else {
+            actionCell = `<div style="display:flex;gap:4px">
+              <button class="btn-vault" onclick="addToVault('${n.url}','${n.title.replace(/'/g,"\\'")}',${n.likes},${n.saves},${n.comments},'${c.date}')" style="padding:4px 8px;font-size:0.78rem;border:1px solid var(--accent);background:transparent;color:var(--accent);border-radius:6px;cursor:pointer;white-space:nowrap">🔥 加入</button>
+              <button class="btn-skip" onclick="showSkipForm('${n.url}','${n.title.replace(/'/g,"\\'")}','${c.date}',${n.likes},${n.saves},${n.comments})" style="padding:4px 8px;font-size:0.78rem;border:1px solid var(--gray);background:transparent;color:var(--gray);border-radius:6px;cursor:pointer;white-space:nowrap">❌ 不加入</button>
+            </div>`;
+          }
           return `<tr class="${n.selected?'candidate-selected':''}">
             <td>${n.rank}${n.selected?' ✅':''}</td>
-            <td style="max-width:250px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${n.title}</td>
+            <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${n.title}</td>
             <td>${n.likes.toLocaleString()}</td>
             <td>${n.saves.toLocaleString()}</td>
             <td>${n.comments}</td>
             <td><a href="${n.url}" target="_blank">查看</a></td>
-            <td>${inVault 
-              ? '<span style="color:var(--green);font-size:0.85rem">✅ 已加入</span>' 
-              : `<button class="btn-vault" onclick="addToVault('${n.url}','${n.title.replace(/'/g,"\\'")}',${n.likes},${n.saves},${n.comments},'${c.date}')" style="padding:4px 10px;font-size:0.8rem;border:1px solid var(--accent);background:transparent;color:var(--accent);border-radius:6px;cursor:pointer;white-space:nowrap">🔥 加入爆文库</button>`
-            }</td>
+            <td>${actionCell}</td>
           </tr>`;
         }).join('')}</tbody>
       </table>
@@ -633,14 +646,87 @@ function addToVault(url, title, likes, saves, comments, date){
   renderCandidates();
 }
 
+function showSkipForm(url, title, date, likes, saves, comments){
+  // Remove existing skip form
+  document.querySelectorAll('.skip-form-overlay').forEach(e => e.remove());
+  
+  const overlay = document.createElement('div');
+  overlay.className = 'skip-form-overlay';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;display:flex;align-items:center;justify-content:center';
+  
+  const noteId = url.split('/').pop().split('?')[0].split('#')[0];
+  
+  const form = document.createElement('div');
+  form.style.cssText = 'background:#fff;border-radius:12px;padding:24px;max-width:480px;width:90%;box-shadow:0 8px 32px rgba(0,0,0,0.2)';
+  form.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:16px">
+      <div>
+        <div style="font-weight:700;font-size:1rem;margin-bottom:4px">❌ 不加入候选</div>
+        <div style="font-size:0.85rem;color:var(--gray);max-width:380px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${title}</div>
+      </div>
+      <button onclick="this.closest('.skip-form-overlay').remove()" style="border:none;background:none;font-size:1.2rem;cursor:pointer;color:var(--gray)">✕</button>
+    </div>
+    <div style="margin-bottom:12px">
+      <label style="font-size:0.85rem;color:var(--gray);display:block;margin-bottom:6px">跳过原因分类</label>
+      <select id="skipCategory" style="width:100%;padding:8px 12px;border:1px solid #ddd;border-radius:6px;font-size:0.9rem">
+        <option value="title_issue">标题问题（太长/不够吸引人）</option>
+        <option value="content_issue">文案问题（风格/结构不搭）</option>
+        <option value="image_issue">图片问题（生图风格不搭）</option>
+        <option value="topic_issue">选题问题（太普通/已写烂）</option>
+        <option value="direction_issue">方向不匹配（与账号定位不符）</option>
+        <option value="destination_issue">目的地重复（近期已出过）</option>
+        <option value="other">其他</option>
+      </select>
+    </div>
+    <div style="margin-bottom:16px">
+      <label style="font-size:0.85rem;color:var(--gray);display:block;margin-bottom:6px">具体原因（选填）</label>
+      <textarea id="skipReason" placeholder="比如：标题太长且没有钩子，图片风格偏精修不适合账号调性..." style="width:100%;padding:8px 12px;border:1px solid #ddd;border-radius:6px;font-size:0.9rem;min-height:80px;resize:vertical;font-family:inherit"></textarea>
+    </div>
+    <div style="display:flex;gap:8px;justify-content:flex-end">
+      <button onclick="this.closest('.skip-form-overlay').remove()" style="padding:8px 16px;border:1px solid #ddd;background:#fff;border-radius:6px;cursor:pointer;font-size:0.9rem">取消</button>
+      <button id="submitSkip" style="padding:8px 16px;border:none;background:var(--gray);color:#fff;border-radius:6px;cursor:pointer;font-size:0.9rem">确认跳过</button>
+    </div>
+  `;
+  overlay.appendChild(form);
+  document.body.appendChild(overlay);
+  
+  form.querySelector('#submitSkip').onclick = function(){
+    const category = form.querySelector('#skipCategory').value;
+    const reason = form.querySelector('#skipReason').value.trim() || '';
+    const feedback = JSON.parse(localStorage.getItem('xhs_feedback') || '[]');
+    if(!feedback.find(f => f.url === url)){
+      feedback.push({
+        url, title, date,
+        category, reason,
+        likes, saves, comments,
+        noteId,
+        addedAt: new Date().toISOString()
+      });
+      localStorage.setItem('xhs_feedback', JSON.stringify(feedback));
+    }
+    overlay.remove();
+    renderCandidates();
+  };
+  
+  // Click outside to close
+  overlay.onclick = function(e){ if(e.target === overlay) overlay.remove(); };
+}
+
 function renderVault(){
   const vault = JSON.parse(localStorage.getItem('xhs_vault') || '[]');
+  const feedback = JSON.parse(localStorage.getItem('xhs_feedback') || '[]');
   const l = document.getElementById('vaultList');
-  if(!vault.length){
-    l.innerHTML = '<div class="empty"><p style="font-size:2rem;margin-bottom:8px">🔥</p><p>爆文库还是空的</p><p style="font-size:0.85rem;color:var(--gray);margin-top:8px">在候选列表中点击「加入爆文库」按钮来添加</p></div>';
+  if(!vault.length && !feedback.length){
+    l.innerHTML = '<div class="empty"><p style="font-size:2rem;margin-bottom:8px">🔥</p><p>爆文库还是空的</p><p style="font-size:0.85rem;color:var(--gray);margin-top:8px">在候选列表中点击「加入」按钮来添加</p></div>';
     return;
   }
-  l.innerHTML = `<div style="margin-bottom:16px;color:var(--gray);font-size:0.9rem">共 ${vault.length} 篇 · cron 任务会优先从爆文库中选题复刻</div>`;
+  let html = '<div style="display:flex;gap:12px;align-items:center;margin-bottom:16px">';
+  html += '<span style="color:var(--gray);font-size:0.9rem">🔥 爆文库 ' + vault.length + ' 篇 · 🚫 跳过 ' + feedback.length + ' 篇</span>';
+  if(feedback.length){
+    html += '<button class="btn-skip" onclick="exportFeedback()" style="padding:4px 10px;font-size:0.78rem;border:1px solid var(--gray);background:transparent;color:var(--gray);border-radius:6px;cursor:pointer">📥 导出跳过原因</button>';
+  }
+  html += '</div>';
+  l.innerHTML = html;
   vault.forEach((v, i) => {
     const card = document.createElement('div');
     card.className = 'candidate-card';
@@ -662,6 +748,27 @@ function removeFromVault(index){
   vault.splice(index, 1);
   localStorage.setItem('xhs_vault', JSON.stringify(vault));
   renderVault();
+}
+
+function exportFeedback(){
+  const feedback = JSON.parse(localStorage.getItem('xhs_feedback') || '[]');
+  if(!feedback.length) return;
+  let yaml = '# 跳过原因导出\n# 导出时间: ' + new Date().toISOString() + '\n\nskip_rules:\n';
+  feedback.forEach(f => {
+    yaml += `  - date: "${f.date || f.addedAt?.slice(0,10) || ''}"\n`;
+    yaml += `    note_title: "${(f.title||'').replace(/"/g,'\\"')}"\n`;
+    yaml += `    note_id: "${f.noteId || ''}"\n`;
+    yaml += `    url: "${f.url || ''}"\n`;
+    yaml += `    layer: "${f.layer || ''}"\n`;
+    yaml += `    reason: "${(f.reason||'').replace(/"/g,'\\"')}"\n`;
+    yaml += `    category: "${f.category || 'other'}"\n`;
+  });
+  const blob = new Blob([yaml], {type:'text/yaml'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'feedback-rules.yaml';
+  a.click();
+  URL.revokeObjectURL(a.href);
 }
 
 renderCards();renderTracker();
