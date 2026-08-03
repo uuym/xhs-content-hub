@@ -727,7 +727,7 @@ async function copyText(id){
 function downloadImages(id){
   const item=contentData.find(d=>d.id===id);if(!item)return;
   const a=document.createElement('a');
-  a.href=`./zips/${id}.zip`;
+  a.href=`./assets/zips/${id}.zip`;
   a.download=`${id}-${item.title.slice(0,10)}.zip`;
   document.body.appendChild(a);
   a.click();
