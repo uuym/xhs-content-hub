@@ -172,7 +172,7 @@ body{font-family:-apple-system,"PingFang SC","Helvetica Neue",sans-serif;backgro
 </div>
 
 <div class="main">
-  <div class="vault-sync-badge" id="vaultSyncBadge" onclick="exportVault()">📤 爆文库待同步</div>
+  <div class="vault-sync-badge" id="vaultSyncBadge">🔄 同步爆文库...</div>
   <div class="view active" id="view-content">
     <div class="sub-tabs">
       <button class="sub-tab active" onclick="filterCards('all',this)">全部</button>
@@ -799,7 +799,7 @@ function addToVault(url, title, likes, saves, comments, date){
     vault.push(item);
     vaultData.push(item);
     localStorage.setItem('xhs_vault', JSON.stringify(vault));
-    document.getElementById('vaultSyncBadge')?.classList.add('show');
+    scheduleVaultSync();
   }
   renderCandidates();
 }
@@ -871,19 +871,31 @@ function showSkipForm(url, title, date, likes, saves, comments){
 }
 
 
-function exportVault(){
+const VAULT_SYNC_URL = 'http://120.48.83.42:8848/vault';
+const VAULT_SYNC_TOKEN = 'xhs_vault_sync_2026';
+let vaultSyncTimer = null;
+
+function autoSyncVault(){
   const vault = JSON.parse(localStorage.getItem('xhs_vault') || '[]');
-  if(!vault.length){alert('爆文库是空的');return;}
-  const data = JSON.stringify(vault, null, 2);
-  const blob = new Blob([data], {type:'application/json'});
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'vault.json';
-  a.click();
-  URL.revokeObjectURL(a.href);
-  // Hide badge after export
-  document.getElementById('vaultSyncBadge')?.classList.remove('show');
-  alert('vault.json 已下载！\n请把文件发到飞书群里，我会自动同步到服务端。');
+  if(!vault.length) return;
+  // Merge with embedded vaultData (dedupe by url)
+  const embedded = vaultData.filter(v => !vault.some(l => l.url === v.url));
+  const merged = vault.concat(embedded);
+  fetch(VAULT_SYNC_URL, {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json', 'X-Sync-Token': VAULT_SYNC_TOKEN},
+    body: JSON.stringify(merged)
+  }).then(r => r.json()).then(d => {
+    if(d.ok){
+      document.getElementById('vaultSyncBadge')?.classList.remove('show');
+      console.log('Vault synced:', d.count, 'items');
+    }
+  }).catch(e => console.warn('Vault sync failed:', e));
+}
+
+function scheduleVaultSync(){
+  clearTimeout(vaultSyncTimer);
+  vaultSyncTimer = setTimeout(autoSyncVault, 3000);
 }
 
 function renderVault(){
@@ -929,6 +941,7 @@ function removeFromVault(index){
     if(idx2 >= 0) vaultData.splice(idx2, 1);
   }
   localStorage.setItem('xhs_vault', JSON.stringify(vault));
+  scheduleVaultSync();
   renderVault();
 }
 
