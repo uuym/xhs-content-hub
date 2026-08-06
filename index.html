@@ -121,6 +121,18 @@ body{font-family:-apple-system,"PingFang SC","Helvetica Neue",sans-serif;backgro
 .status-pill.added{color:var(--green);background:rgba(7,193,96,0.08)}
 .status-pill.skipped{color:var(--gray);background:var(--gray-light)}
 
+/* Vault List */
+.vault-list{display:flex;flex-direction:column;gap:8px}
+.vault-item{display:flex;align-items:center;gap:12px;background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:12px 16px;transition:all 0.18s ease}
+.vault-item:hover{box-shadow:0 4px 12px rgba(0,0,0,0.08)}
+.vault-item-rank{flex-shrink:0;width:28px;height:28px;border-radius:50%;background:var(--accent-light);color:var(--accent);font-size:0.78rem;font-weight:700;display:flex;align-items:center;justify-content:center}
+.vault-item-main{flex:1;min-width:0}
+.vault-item-title{font-size:0.88rem;font-weight:600;margin-bottom:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.vault-item-title a{color:var(--text);text-decoration:none}
+.vault-item-title a:hover{color:var(--accent)}
+.vault-item-meta{display:flex;gap:14px;font-size:0.75rem;color:var(--gray)}
+.vault-item-date{margin-left:auto;color:var(--gray);font-size:0.7rem}
+
 /* Pagination */
 .pagination{display:flex;justify-content:center;align-items:center;gap:6px;margin-top:24px;padding:16px 0}
 .btn-page{min-width:36px;height:36px;padding:0 10px;border:1px solid var(--border);background:#fff;color:var(--text);border-radius:8px;cursor:pointer;font-size:0.82rem;font-weight:500;transition:all 0.18s ease;display:inline-flex;align-items:center;justify-content:center}
@@ -921,33 +933,45 @@ function renderVault(){
   const localVault = JSON.parse(localStorage.getItem('xhs_vault') || '[]');
   const localUrls = new Set(localVault.map(v => v.url));
   const vault = vaultData.filter(v => !localUrls.has(v.url)).concat(localVault);
+  // Sort by likes descending
+  vault.sort((a,b) => (b.likes||0) - (a.likes||0));
   const feedback = JSON.parse(localStorage.getItem('xhs_feedback') || '[]');
   const l = document.getElementById('vaultList');
   if(!vault.length && !feedback.length){
     l.innerHTML = '<div class="empty"><p style="font-size:2rem;margin-bottom:8px">🔥</p><p>爆文库还是空的</p><p style="font-size:0.85rem;color:var(--gray);margin-top:8px">在候选列表中点击「加入」按钮来添加</p></div>';
     return;
   }
-  let html = '<div style="display:flex;gap:12px;align-items:center;margin-bottom:16px">';
-  html += '<span style="color:var(--gray);font-size:0.9rem">🔥 爆文库 ' + vault.length + ' 篇 · 🚫 跳过 ' + feedback.length + ' 篇</span>';
+  let header = '<div style="display:flex;gap:12px;align-items:center;margin-bottom:20px;flex-wrap:wrap">';
+  header += '<span style="color:var(--text);font-size:0.9rem;font-weight:600">🔥 爆文库</span>';
+  header += '<span style="font-size:0.8rem;color:var(--gray)">共 ' + vault.length + ' 篇笔记</span>';
   if(feedback.length){
-    html += '<button class="btn-candidate btn-reject" onclick="exportFeedback()">📥 导出跳过原因</button>';
+    header += '<span style="font-size:0.8rem;color:var(--gray)">· 🚫 已跳过 ' + feedback.length + ' 篇</span>';
+    header += '<button class="btn-candidate btn-reject" onclick="exportFeedback()">📥 导出跳过原因</button>';
   }
-  html += '</div>';
-  l.innerHTML = html;
+  header += '</div>';
+  l.innerHTML = header;
+  // Render as a clean table
+  const tbl = document.createElement('div');
+  tbl.className = 'vault-list';
   vault.forEach((v, i) => {
-    const card = document.createElement('div');
-    card.className = 'candidate-card';
-    card.innerHTML = `<div class="candidate-header">
-      <span class="candidate-date">加入于 ${v.addedAt ? v.addedAt.slice(0,10) : v.date}</span>
-      <div class="candidate-info"><b>${v.title}</b></div>
-      <div class="candidate-summary">赞 ${v.likes?.toLocaleString() || '—'} · 藏 ${v.saves?.toLocaleString() || '—'} · 评 ${v.comments || '—'}</div>
-    </div>
-    <div class="candidate-body" style="display:flex;align-items:center;gap:12px">
-      <a href="${v.url}" target="_blank" style="color:var(--accent)">查看原笔记 →</a>
-      <button class="btn btn-skip" style="margin-left:auto" onclick="removeFromVault(${i})">移除</button>
-    </div>`;
-    l.appendChild(card);
+    const dateStr = v.addedAt ? v.addedAt.slice(0,10) : (v.date || '—');
+    const item = document.createElement('div');
+    item.className = 'vault-item';
+    item.innerHTML = `
+      <div class="vault-item-rank">${i+1}</div>
+      <div class="vault-item-main">
+        <div class="vault-item-title"><a href="${v.url}" target="_blank">${v.title}</a></div>
+        <div class="vault-item-meta">
+          <span>❤️ ${v.likes?.toLocaleString() || '—'}</span>
+          <span>🔖 ${v.saves?.toLocaleString() || '—'}</span>
+          <span>💬 ${v.comments || '—'}</span>
+          <span class="vault-item-date">加入于 ${dateStr}</span>
+        </div>
+      </div>
+      <button class="btn-candidate btn-reject" onclick="removeFromVault(${i})" title="移除">✕</button>`;
+    tbl.appendChild(item);
   });
+  l.appendChild(tbl);
 }
 
 function removeFromVault(index){
