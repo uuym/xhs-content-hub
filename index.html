@@ -622,14 +622,7 @@ function loadCandidateHistory(){
         candidateData.unshift(h);
       }
     });
-    const now = new Date();
-    const cutoff = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-    const filtered = candidateData.filter(c => {
-      const d = new Date(c.date.replace(/\./g, '/'));
-      return d > cutoff;
-    });
-    candidateData.length = 0;
-    filtered.forEach(f => candidateData.push(f));
+    // Show all history, no 7-day cutoff
   } catch(e) { console.warn('Failed to load candidate history:', e); }
 }
 function saveCandidateHistory(){
@@ -661,12 +654,19 @@ function filterCards(f,el){currentFilter=f;document.querySelectorAll('.sub-tab')
 function renderCards(){const g=document.getElementById('cardGrid');g.innerHTML='';const f=contentData.filter(i=>currentFilter==='all'||getStatus(i.id)===currentFilter);if(!f.length){g.innerHTML='<div class="empty"><p style="font-size:2rem;margin-bottom:8px">📝</p><p>暂无内容</p></div>';return}f.forEach(i=>{const st=getStatus(i.id),img=i.images[0]||'';const b=st==='published'?'<span class="card-status status-published">已发布</span>':st==='skipped'?'<span class="card-status status-skipped">已跳过</span>':'<span class="card-status status-draft">待发布</span>';const c=document.createElement('div');c.className='card-wrapper';c.innerHTML=`${b}<div class="card" onclick="openModal('${i.id}')">${img?`<img class="card-img" src="${img}" loading="lazy">`:'<div class="card-img"></div>'}<div class="card-body"><span class="card-date">${i.date}</span><div class="card-title">${i.title}</div><div class="card-tags">${i.tags.slice(0,3).map(t=>`<span class="card-tag">${t}</span>`).join('')}</div></div></div>`;g.appendChild(c)});updateStats()}
 function updateStats(){let d=0,p=0;contentData.forEach(i=>{const s=getStatus(i.id);if(s==='draft')d++;if(s==='published')p++});document.getElementById('cntDraft').textContent=d;document.getElementById('cntPub').textContent=p;document.getElementById('cntTotal').textContent=contentData.length}
 
+let candidatePage=1;
+const candidatePageSize=5;
 function renderCandidates(){
   loadCandidateHistory();
   saveCandidateHistory();
   const l=document.getElementById('candidateList');l.innerHTML='';
   const vault = JSON.parse(localStorage.getItem('xhs_vault') || '[]');
-  candidateData.forEach(c=>{
+  const totalPages=Math.max(1,Math.ceil(candidateData.length/candidatePageSize));
+  if(candidatePage>totalPages)candidatePage=totalPages;
+  if(candidatePage<1)candidatePage=1;
+  const startIdx=(candidatePage-1)*candidatePageSize;
+  const pageData=candidateData.slice(startIdx,startIdx+candidatePageSize);
+  pageData.forEach(c=>{
     const cd=document.createElement('div');
     cd.className='candidate-card';
     cd.innerHTML=`<div class="candidate-header">
@@ -710,6 +710,15 @@ function renderCandidates(){
     </div>`;
     l.appendChild(cd);
   });
+  // Pagination controls
+  const pg=document.createElement('div');
+  pg.style.cssText='display:flex;justify-content:center;align-items:center;gap:12px;margin-top:20px;padding:12px';
+  pg.innerHTML=`
+    <button onclick="candidatePage--;renderCandidates()" ${candidatePage<=1?'disabled style="opacity:0.4;cursor:not-allowed"':'style="padding:6px 16px;border:1px solid var(--accent);background:transparent;color:var(--accent);border-radius:6px;cursor:pointer""'}>‹ 上一页</button>
+    <span style="font-size:0.85rem;color:var(--gray)">第 ${candidatePage} / ${totalPages} 页（共 ${candidateData.length} 天）</span>
+    <button onclick="candidatePage++;renderCandidates()" ${candidatePage>=totalPages?'disabled style="opacity:0.4;cursor:not-allowed"':'style="padding:6px 16px;border:1px solid var(--accent);background:transparent;color:var(--accent);border-radius:6px;cursor:pointer""'}>下一页 ›</button>
+  `;
+  l.appendChild(pg);
 }
 
 function addToVault(url, title, likes, saves, comments, date){
