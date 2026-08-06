@@ -138,6 +138,9 @@ body{font-family:-apple-system,"PingFang SC","Helvetica Neue",sans-serif;backgro
 
 .skip-form-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:9999;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(2px)}
 .skip-form-dialog{background:#fff;border-radius:16px;padding:24px;max-width:480px;width:90%;box-shadow:0 8px 32px rgba(0,0,0,0.2)}
+.vault-sync-badge{display:none;position:fixed;top:12px;right:12px;background:var(--orange);color:#fff;padding:6px 14px;border-radius:20px;font-size:0.78rem;font-weight:500;z-index:50;box-shadow:0 2px 8px rgba(255,149,0,0.3);cursor:pointer;transition:all 0.18s ease}
+.vault-sync-badge.show{display:flex;align-items:center;gap:5px}
+.vault-sync-badge:hover{background:#e6850a;transform:translateY(-1px)}
 .empty{text-align:center;padding:50px 20px;color:var(--gray)}
 
 @media(max-width:768px){
@@ -169,6 +172,7 @@ body{font-family:-apple-system,"PingFang SC","Helvetica Neue",sans-serif;backgro
 </div>
 
 <div class="main">
+  <div class="vault-sync-badge" id="vaultSyncBadge" onclick="exportVault()">📤 爆文库待同步</div>
   <div class="view active" id="view-content">
     <div class="sub-tabs">
       <button class="sub-tab active" onclick="filterCards('all',this)">全部</button>
@@ -649,8 +653,14 @@ let candidateData=[{date:"2026.08.05",keywords:["上海Citywalk","上海周末�
 {date:"2026.08.01",keywords:["上海Citywalk","上海周末去哪儿","上海免费景点","上海遛娃好去处","周末两天去哪玩","短途旅行攻略","保姆级旅行攻略","抄作业旅行攻略","上海周边游","小众旅行地","暑假尾声","亲子游"],searchCount:323,filteredCount:2,selectedScore:79,notes:[{rank:1,title:"成都4h出逃｜冶勒湖极简出行攻略",url:"https://www.xiaohongshu.com/discovery/item/6a64c97f000000002201a55a?app_platform=ios&app_version=9.32.3&share_from_user_hidden=true&xsec_source=app_share&type=normal&xsec_token=CBqKmHQaV9TXV7iuip3dhHZDy7l-5OSycMSznaQiIDCoA=&author_share=1",likes:906,saves:709,comments:113,shares:1246,score:79,selected:true},{rank:2,title:"一转头发现他也在打卡",url:"https://www.xiaohongshu.com/discovery/item/6a64aec30000000013026c0a?app_platform=ios&app_version=9.32.2&share_from_user_hidden=true&xsec_source=app_share&type=normal&xsec_token=CBqsbtrlFGFkESuQN2B2f6RzOJwWfB4t7v033C7QfeQxs=&author_share=1",likes:10401,saves:506,comments:369,shares:1027,score:56,selected:false}],selectionLogic:"本轮 cron 仍无法直接读取浏览器 localStorage `xhs_vault`，因此未命中“爆文库优先”链路，按自动评分与近 7 天去重规则选稿。最终选择《成都4h出逃｜冶勒湖极简出行攻略》：互动数据达标，发布时间在近 7 天内，和最近已出稿主题重复度较低，且客观信息完整，适合压缩成一篇可直接复制到内容工坊的图文稿。"},
 {date:"2026.07.31",keywords:["上海Citywalk","上海周末去哪儿","上海免费景点","上海遛娃好去处","周末两天去哪玩","短途旅行攻略","保姆级旅行攻略","抄作业旅行攻略","上海周边游","小众旅行地","暑假去哪玩","夏日避暑","海岛游"],searchCount:263,filteredCount:2,selectedScore:76,notes:[{rank:1,title:"官宣 | 自嘲熊主题快闪店空降上海",url:"https://www.xiaohongshu.com/discovery/item/6a633e72000000000903701d?app_platform=ios&app_version=9.28.1&share_from_user_hidden=true&xsec_source=app_share&type=normal&xsec_token=CB3Xgb-k8fUX-rwpW4kU7rfLM6Wsb1NLlYtEoP8IXVJ58=&author_share=1",likes:6725,saves:1824,comments:1735,shares:11877,score:76,selected:true},{rank:2,title:"一转头发现他也在打卡",url:"https://www.xiaohongshu.com/discovery/item/6a64aec30000000013026c0a?app_platform=ios&app_version=9.32.2&share_from_user_hidden=true&xsec_source=app_share&type=normal&xsec_token=CBqsbtrlFGFkESuQN2B2f6RzOJwWfB4t7v033C7QfeQxs=&author_share=1",likes:10401,saves:506,comments:369,shares:1027,score:56,selected:false}],selectionLogic:"本轮 cron 无法直接读取浏览器 localStorage `xhs_vault`，按爆文库不可见处理，降级为自动评分选稿。近 7 天已出稿里，上海免费去处、轮渡、杭州路线已经连续出现，因此本轮优先避开这些主题。最终选择《官宣 | 自嘲熊主题快闪店空降上海》：一是短途海岛线与账号定位更匹配；二是与近期已出稿重复度低；三是景点和路线客观事实完整，适合改写成周末 2 天 1 晚可直接抄作业的攻略；四是图片以场景图为主，不依赖亲子叙事。"},
 {date:"2026.07.30",keywords:["上海Citywalk","上海周末去哪儿","上海免费景点","上海遛娃好去处","周末两天去哪玩","短途旅行攻略","保姆级旅行攻略","抄作业旅行攻略","上海周边游","小众旅行地","暑假去哪玩","夏日避暑","海岛游"],searchCount:361,filteredCount:155,selectedScore:74.5,notes:[{rank:1,title:"迄今为止，我最喜欢的海边小城出现了🌴",url:"https://www.xiaohongshu.com/discovery/item/6a1fb0720000000022016d0a?app_platform=ios&app_version=9.34&share_from_user_hidden=true&xsec_source=app_share&type=normal&xsec_token=CBO83PniMEWLlGtXw3iYPQIJSzz7xjYWYFaea4cpTt5AM=&author_share=1",likes:5184,saves:3119,comments:255,shares:2582,score:74.5,selected:true},{rank:2,title:"杭州三日游保姆级游玩攻略+避坑指南",url:"https://www.xiaohongshu.com/discovery/item/687903d6000000001203dbb0?app_platform=ios&app_version=9.29&share_from_user_hidden=true&xsec_source=app_share&type=normal&xsec_token=CBcK4d_xeQ3BoLDt9KPvkHp_2G__4GNUfUljWUrh32is0=&author_share=1",likes:19596,saves:20034,comments:106,shares:8623,score:77,selected:false},{rank:3,title:"📌绍兴+乌镇+嘉兴5天4晚｜人均2k逛江南攻略",url:"https://www.xiaohongshu.com/discovery/item/69c66b1f000000001e00f4e0?app_platform=ios&app_version=9.32.3&share_from_user_hidden=true&xsec_source=app_share&type=normal&xsec_token=CBfXby_3FtHnz3p9jEuntANVWpfb6xDzuX5RELoEGA7rU=&author_share=1",likes:9617,saves:6831,comments:119,shares:6367,score:77,selected:false},{rank:4,title:"杭州📍两天一夜｜懒人版不绕路逛吃攻略❗",url:"https://www.xiaohongshu.com/discovery/item/6984628e0000000022031562?app_platform=ios&app_version=9.31.2&share_from_user_hidden=true&xsec_source=app_share&type=normal&xsec_token=CBwjJWTL4F1LEJe7IH2jcuRQTwAkFL4taCDOWWzOA934s=&author_share=1",likes:23221,saves:21482,comments:336,shares:11978,score:74.5,selected:false},{rank:5,title:"夏季旅游🏄♀️江浙沪周边游好去处❗️周末游",url:"https://www.xiaohongshu.com/discovery/item/647de5c0000000001303f042?app_platform=ios&app_version=9.34&share_from_user_hidden=true&xsec_source=app_share&type=normal&noteAttributes=goods&xsec_token=CBK1LrbNa0qTW20xTRxPBzD0E7YjCwuRAcbRnIEZ5yQ4U=&author_share=1&back_chain_id=goods_note_share",likes:5939,saves:5384,comments:87,shares:3683,score:74.5,selected:false}],selectionLogic:"搜索后自动评分的高分项里，杭州路线内容仍然偏多，但与最近 7 天已出稿的杭州三日游主题过近，因此在跨天去重和人工二次判定阶段被降级。最终选择这篇温州洞头海边小城：一是属于江浙沪短途海岛线，和账号定位一致；二是与近几天的上海免费去处、轮渡、杭州路线不重复；三是景点和路线客观事实清晰，适合改写成 2 天 1 晚可直接抄作业的周末出逃攻略；四是原图以海景和场景图为主，不依赖亲子叙事。"}];
+let vaultData=[];
 function loadCandidateHistory(){
   try {
+    // Load vault from embedded data, merge with localStorage
+    const localVault = JSON.parse(localStorage.getItem('xhs_vault') || '[]');
+    const localUrls = new Set(localVault.map(v => v.url));
+    vaultData = vaultData.filter(v => !localUrls.has(v.url)).concat(localVault);
+    
     const hist = JSON.parse(localStorage.getItem('xhs_candidates') || '[]');
     const existingDates = candidateData.map(c => c.date);
     hist.forEach(h => {
@@ -779,8 +789,11 @@ function renderCandidates(){
 function addToVault(url, title, likes, saves, comments, date){
   const vault = JSON.parse(localStorage.getItem('xhs_vault') || '[]');
   if(!vault.some(v => v.url === url)){
-    vault.push({url, title, likes, saves, comments, date, addedAt: new Date().toISOString()});
+    const item = {url, title, likes, saves, comments, date, addedAt: new Date().toISOString()};
+    vault.push(item);
+    vaultData.push(item);
     localStorage.setItem('xhs_vault', JSON.stringify(vault));
+    document.getElementById('vaultSyncBadge')?.classList.add('show');
   }
   renderCandidates();
 }
@@ -851,8 +864,27 @@ function showSkipForm(url, title, date, likes, saves, comments){
   overlay.onclick = function(e){ if(e.target === overlay) overlay.remove(); };
 }
 
-function renderVault(){
+
+function exportVault(){
   const vault = JSON.parse(localStorage.getItem('xhs_vault') || '[]');
+  if(!vault.length){alert('爆文库是空的');return;}
+  const data = JSON.stringify(vault, null, 2);
+  const blob = new Blob([data], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'vault.json';
+  a.click();
+  URL.revokeObjectURL(a.href);
+  // Hide badge after export
+  document.getElementById('vaultSyncBadge')?.classList.remove('show');
+  alert('vault.json 已下载！\n请把文件发到飞书群里，我会自动同步到服务端。');
+}
+
+function renderVault(){
+  // Merge embedded vaultData with localStorage
+  const localVault = JSON.parse(localStorage.getItem('xhs_vault') || '[]');
+  const localUrls = new Set(localVault.map(v => v.url));
+  const vault = vaultData.filter(v => !localUrls.has(v.url)).concat(localVault);
   const feedback = JSON.parse(localStorage.getItem('xhs_feedback') || '[]');
   const l = document.getElementById('vaultList');
   if(!vault.length && !feedback.length){
@@ -884,7 +916,12 @@ function renderVault(){
 
 function removeFromVault(index){
   const vault = JSON.parse(localStorage.getItem('xhs_vault') || '[]');
-  vault.splice(index, 1);
+  const removed = vault.splice(index, 1);
+  // Also remove from vaultData
+  if(removed[0]){
+    const idx2 = vaultData.findIndex(v => v.url === removed[0].url);
+    if(idx2 >= 0) vaultData.splice(idx2, 1);
+  }
   localStorage.setItem('xhs_vault', JSON.stringify(vault));
   renderVault();
 }
