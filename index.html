@@ -90,18 +90,54 @@ body{font-family:-apple-system,"PingFang SC","Helvetica Neue",sans-serif;backgro
 
 /* Action Bar */
 .action-bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding:14px 22px;background:var(--gray-light);border-top:1px solid var(--border)}
-.btn{padding:7px 16px;border-radius:8px;border:none;font-size:0.85rem;cursor:pointer;font-weight:500}
-.btn:hover{opacity:0.85}
+
+/* Button System */
+.btn{padding:8px 18px;border-radius:8px;border:none;font-size:0.85rem;cursor:pointer;font-weight:500;transition:all 0.18s ease;display:inline-flex;align-items:center;gap:5px}
+.btn:hover{transform:translateY(-1px);box-shadow:0 3px 10px rgba(0,0,0,0.12)}
+.btn:active{transform:translateY(0)}
 .btn-publish{background:var(--green);color:#fff}
+.btn-publish:hover{background:#06ad56}
 .btn-skip{background:var(--gray);color:#fff}
+.btn-skip:hover{background:#5a6268}
 .btn-link{background:var(--accent);color:#fff}
-.btn-copy-small{padding:4px 10px;border-radius:7px;border:none;background:#333;color:#fff;font-size:0.72rem;cursor:pointer;font-weight:500}
+.btn-link:hover{background:#d4273d}
+.btn-copy-small{padding:5px 12px;border-radius:6px;border:none;background:#333;color:#fff;font-size:0.72rem;cursor:pointer;font-weight:500;transition:all 0.18s ease}
+.btn-copy-small:hover{background:#444;transform:translateY(-1px)}
 .btn-download{background:#333;color:#fff}
-.link-input{flex:1;min-width:180px;padding:7px 11px;border:1px solid var(--border);border-radius:8px;font-size:0.85rem}
-.reason-input{flex:1;min-width:180px;padding:7px 11px;border:1px solid var(--border);border-radius:8px;font-size:0.85px}
+.btn-download:hover{background:#444}
+
+/* Candidate Action Buttons */
+.btn-candidate{padding:5px 12px;font-size:0.78rem;border-radius:6px;cursor:pointer;white-space:nowrap;transition:all 0.18s ease;font-weight:500;border:none}
+.btn-candidate:hover{transform:translateY(-1px);box-shadow:0 2px 8px rgba(0,0,0,0.1)}
+.btn-candidate:active{transform:translateY(0)}
+.btn-add{background:var(--accent);color:#fff}
+.btn-add:hover{background:#d4273d}
+.btn-reject{background:#f1f3f5;color:var(--gray);border:1px solid var(--border)}
+.btn-reject:hover{background:#e9ecef;color:#495057}
+
+/* Status Pills */
+.status-pill{display:inline-flex;align-items:center;gap:3px;font-size:0.78rem;font-weight:500;padding:2px 8px;border-radius:5px}
+.status-pill.published{color:var(--green);background:rgba(7,193,96,0.08)}
+.status-pill.added{color:var(--green);background:rgba(7,193,96,0.08)}
+.status-pill.skipped{color:var(--gray);background:var(--gray-light)}
+
+/* Pagination */
+.pagination{display:flex;justify-content:center;align-items:center;gap:6px;margin-top:24px;padding:16px 0}
+.btn-page{min-width:36px;height:36px;padding:0 10px;border:1px solid var(--border);background:#fff;color:var(--text);border-radius:8px;cursor:pointer;font-size:0.82rem;font-weight:500;transition:all 0.18s ease;display:inline-flex;align-items:center;justify-content:center}
+.btn-page:hover:not(:disabled){border-color:var(--accent);color:var(--accent);background:var(--accent-light)}
+.btn-page:disabled{opacity:0.35;cursor:not-allowed}
+.btn-page.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.btn-page.nav-btn{padding:0 14px;gap:4px}
+.page-info{font-size:0.8rem;color:var(--gray);margin:0 8px}
+
+.link-input{flex:1;min-width:180px;padding:8px 12px;border:1px solid var(--border);border-radius:8px;font-size:0.85rem;transition:border-color 0.18s ease}
+.link-input:focus{outline:none;border-color:var(--accent)}
+.reason-input{flex:1;min-width:180px;padding:8px 12px;border:1px solid var(--border);border-radius:8px;font-size:0.85rem}
 .reason-section{margin-top:10px}
 .reason-label{font-size:0.8rem;color:var(--gray);margin-bottom:4px}
 
+.skip-form-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:9999;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(2px)}
+.skip-form-dialog{background:#fff;border-radius:16px;padding:24px;max-width:480px;width:90%;box-shadow:0 8px 32px rgba(0,0,0,0.2)}
 .empty{text-align:center;padding:50px 20px;color:var(--gray)}
 
 @media(max-width:768px){
@@ -684,15 +720,15 @@ function renderCandidates(){
           const isPublished = contentData.some(d => d.title && n.title && (d.title.includes(n.title.slice(0,8)) || n.title.includes(d.title.slice(0,8))));
           let actionCell;
           if(isPublished){
-            actionCell = '<span style="color:var(--green);font-size:0.85rem">📋 已出稿</span>';
+            actionCell = '<span class="status-pill published">📋 已出稿</span>';
           } else if(inVault){
-            actionCell = '<span style="color:var(--green);font-size:0.85rem">✅ 已加入</span>';
+            actionCell = '<span class="status-pill added">✅ 已加入</span>';
           } else if(fb){
-            actionCell = `<span style="color:var(--gray);font-size:0.85rem" title="${fb.reason}">🚫 已跳过</span>`;
+            actionCell = `<span class="status-pill skipped" title="${fb.reason}">🚫 已跳过</span>`;
           } else {
-            actionCell = `<div style="display:flex;gap:4px">
-              <button class="btn-vault" onclick="addToVault('${n.url}','${n.title.replace(/'/g,"\\'")}',${n.likes},${n.saves},${n.comments},'${c.date}')" style="padding:4px 8px;font-size:0.78rem;border:1px solid var(--accent);background:transparent;color:var(--accent);border-radius:6px;cursor:pointer;white-space:nowrap">🔥 加入</button>
-              <button class="btn-skip" onclick="showSkipForm('${n.url}','${n.title.replace(/'/g,"\\'")}','${c.date}',${n.likes},${n.saves},${n.comments})" style="padding:4px 8px;font-size:0.78rem;border:1px solid var(--gray);background:transparent;color:var(--gray);border-radius:6px;cursor:pointer;white-space:nowrap">❌ 不加入</button>
+            actionCell = `<div style="display:flex;gap:6px">
+              <button class="btn-candidate btn-add" onclick="addToVault('${n.url}','${n.title.replace(/'/g,"\\'")}',${n.likes},${n.saves},${n.comments},'${c.date}')">🔥 加入</button>
+              <button class="btn-candidate btn-reject" onclick="showSkipForm('${n.url}','${n.title.replace(/'/g,"\\'")}','${c.date}',${n.likes},${n.saves},${n.comments})">❌ 不加入</button>
             </div>`;
           }
           return `<tr class="${n.selected?'candidate-selected':''}">
@@ -712,12 +748,31 @@ function renderCandidates(){
   });
   // Pagination controls
   const pg=document.createElement('div');
-  pg.style.cssText='display:flex;justify-content:center;align-items:center;gap:12px;margin-top:20px;padding:12px';
-  pg.innerHTML=`
-    <button onclick="candidatePage--;renderCandidates()" ${candidatePage<=1?'disabled style="opacity:0.4;cursor:not-allowed"':'style="padding:6px 16px;border:1px solid var(--accent);background:transparent;color:var(--accent);border-radius:6px;cursor:pointer""'}>‹ 上一页</button>
-    <span style="font-size:0.85rem;color:var(--gray)">第 ${candidatePage} / ${totalPages} 页（共 ${candidateData.length} 天）</span>
-    <button onclick="candidatePage++;renderCandidates()" ${candidatePage>=totalPages?'disabled style="opacity:0.4;cursor:not-allowed"':'style="padding:6px 16px;border:1px solid var(--accent);background:transparent;color:var(--accent);border-radius:6px;cursor:pointer""'}>下一页 ›</button>
-  `;
+  pg.className='pagination';
+  let pageBtns='';
+  // Prev button
+  pageBtns+=`<button class="btn-page nav-btn" onclick="candidatePage--;renderCandidates()" ${candidatePage<=1?'disabled':''}>‹ 上一页</button>`;
+  // Page number buttons (show max 7 pages, with ellipsis)
+  const maxVisible=7;
+  if(totalPages<=maxVisible){
+    for(let i=1;i<=totalPages;i++){
+      pageBtns+=`<button class="btn-page ${i===candidatePage?'active':''}" onclick="candidatePage=${i};renderCandidates()">${i}</button>`;
+    }
+  } else {
+    // Always show first page
+    pageBtns+=`<button class="btn-page ${1===candidatePage?'active':''}" onclick="candidatePage=1;renderCandidates()">1</button>`;
+    let start=Math.max(2,candidatePage-2);
+    let end=Math.min(totalPages-1,candidatePage+2);
+    if(start>2) pageBtns+='<span class="page-info">...</span>';
+    for(let i=start;i<=end;i++){
+      pageBtns+=`<button class="btn-page ${i===candidatePage?'active':''}" onclick="candidatePage=${i};renderCandidates()">${i}</button>`;
+    }
+    if(end<totalPages-1) pageBtns+='<span class="page-info">...</span>';
+    pageBtns+=`<button class="btn-page ${totalPages===candidatePage?'active':''}" onclick="candidatePage=${totalPages};renderCandidates()">${totalPages}</button>`;
+  }
+  // Next button
+  pageBtns+=`<button class="btn-page nav-btn" onclick="candidatePage++;renderCandidates()" ${candidatePage>=totalPages?'disabled':''}>下一页 ›</button>`;
+  pg.innerHTML=pageBtns;
   l.appendChild(pg);
 }
 
@@ -741,18 +796,18 @@ function showSkipForm(url, title, date, likes, saves, comments){
   const noteId = url.split('/').pop().split('?')[0].split('#')[0];
   
   const form = document.createElement('div');
-  form.style.cssText = 'background:#fff;border-radius:12px;padding:24px;max-width:480px;width:90%;box-shadow:0 8px 32px rgba(0,0,0,0.2)';
+  form.style.cssText = 'background:#fff;border-radius:16px;padding:24px;max-width:480px;width:90%;box-shadow:0 8px 32px rgba(0,0,0,0.2)';
   form.innerHTML = `
     <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:16px">
       <div>
         <div style="font-weight:700;font-size:1rem;margin-bottom:4px">❌ 不加入候选</div>
         <div style="font-size:0.85rem;color:var(--gray);max-width:380px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${title}</div>
       </div>
-      <button onclick="this.closest('.skip-form-overlay').remove()" style="border:none;background:none;font-size:1.2rem;cursor:pointer;color:var(--gray)">✕</button>
+      <button onclick="this.closest('.skip-form-overlay').remove()" style="border:none;background:none;font-size:1.2rem;cursor:pointer;color:var(--gray);padding:4px 8px">✕</button>
     </div>
     <div style="margin-bottom:12px">
       <label style="font-size:0.85rem;color:var(--gray);display:block;margin-bottom:6px">跳过原因分类</label>
-      <select id="skipCategory" style="width:100%;padding:8px 12px;border:1px solid #ddd;border-radius:6px;font-size:0.9rem">
+      <select id="skipCategory" style="width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:8px;font-size:0.9rem;background:#fff">
         <option value="title_issue">标题问题（太长/不够吸引人）</option>
         <option value="content_issue">文案问题（风格/结构不搭）</option>
         <option value="image_issue">图片问题（生图风格不搭）</option>
@@ -764,11 +819,11 @@ function showSkipForm(url, title, date, likes, saves, comments){
     </div>
     <div style="margin-bottom:16px">
       <label style="font-size:0.85rem;color:var(--gray);display:block;margin-bottom:6px">具体原因（选填）</label>
-      <textarea id="skipReason" placeholder="比如：标题太长且没有钩子，图片风格偏精修不适合账号调性..." style="width:100%;padding:8px 12px;border:1px solid #ddd;border-radius:6px;font-size:0.9rem;min-height:80px;resize:vertical;font-family:inherit"></textarea>
+      <textarea id="skipReason" placeholder="比如：标题太长且没有钩子，图片风格偏精修不适合账号调性..." style="width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:8px;font-size:0.9rem;min-height:80px;resize:vertical;font-family:inherit;background:#fff"></textarea>
     </div>
     <div style="display:flex;gap:8px;justify-content:flex-end">
-      <button onclick="this.closest('.skip-form-overlay').remove()" style="padding:8px 16px;border:1px solid #ddd;background:#fff;border-radius:6px;cursor:pointer;font-size:0.9rem">取消</button>
-      <button id="submitSkip" style="padding:8px 16px;border:none;background:var(--gray);color:#fff;border-radius:6px;cursor:pointer;font-size:0.9rem">确认跳过</button>
+      <button class="btn-candidate btn-reject" onclick="this.closest('.skip-form-overlay').remove()">取消</button>
+      <button class="btn-candidate btn-add" id="submitSkip">确认跳过</button>
     </div>
   `;
   overlay.appendChild(form);
@@ -807,7 +862,7 @@ function renderVault(){
   let html = '<div style="display:flex;gap:12px;align-items:center;margin-bottom:16px">';
   html += '<span style="color:var(--gray);font-size:0.9rem">🔥 爆文库 ' + vault.length + ' 篇 · 🚫 跳过 ' + feedback.length + ' 篇</span>';
   if(feedback.length){
-    html += '<button class="btn-skip" onclick="exportFeedback()" style="padding:4px 10px;font-size:0.78rem;border:1px solid var(--gray);background:transparent;color:var(--gray);border-radius:6px;cursor:pointer">📥 导出跳过原因</button>';
+    html += '<button class="btn-candidate btn-reject" onclick="exportFeedback()">📥 导出跳过原因</button>';
   }
   html += '</div>';
   l.innerHTML = html;
