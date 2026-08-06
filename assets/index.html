@@ -90,18 +90,57 @@ body{font-family:-apple-system,"PingFang SC","Helvetica Neue",sans-serif;backgro
 
 /* Action Bar */
 .action-bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding:14px 22px;background:var(--gray-light);border-top:1px solid var(--border)}
-.btn{padding:7px 16px;border-radius:8px;border:none;font-size:0.85rem;cursor:pointer;font-weight:500}
-.btn:hover{opacity:0.85}
+
+/* Button System */
+.btn{padding:8px 18px;border-radius:8px;border:none;font-size:0.85rem;cursor:pointer;font-weight:500;transition:all 0.18s ease;display:inline-flex;align-items:center;gap:5px}
+.btn:hover{transform:translateY(-1px);box-shadow:0 3px 10px rgba(0,0,0,0.12)}
+.btn:active{transform:translateY(0)}
 .btn-publish{background:var(--green);color:#fff}
+.btn-publish:hover{background:#06ad56}
 .btn-skip{background:var(--gray);color:#fff}
+.btn-skip:hover{background:#5a6268}
 .btn-link{background:var(--accent);color:#fff}
-.btn-copy-small{padding:4px 10px;border-radius:7px;border:none;background:#333;color:#fff;font-size:0.72rem;cursor:pointer;font-weight:500}
+.btn-link:hover{background:#d4273d}
+.btn-copy-small{padding:5px 12px;border-radius:6px;border:none;background:#333;color:#fff;font-size:0.72rem;cursor:pointer;font-weight:500;transition:all 0.18s ease}
+.btn-copy-small:hover{background:#444;transform:translateY(-1px)}
 .btn-download{background:#333;color:#fff}
-.link-input{flex:1;min-width:180px;padding:7px 11px;border:1px solid var(--border);border-radius:8px;font-size:0.85rem}
-.reason-input{flex:1;min-width:180px;padding:7px 11px;border:1px solid var(--border);border-radius:8px;font-size:0.85px}
+.btn-download:hover{background:#444}
+
+/* Candidate Action Buttons */
+.btn-candidate{padding:5px 12px;font-size:0.78rem;border-radius:6px;cursor:pointer;white-space:nowrap;transition:all 0.18s ease;font-weight:500;border:none}
+.btn-candidate:hover{transform:translateY(-1px);box-shadow:0 2px 8px rgba(0,0,0,0.1)}
+.btn-candidate:active{transform:translateY(0)}
+.btn-add{background:var(--accent);color:#fff}
+.btn-add:hover{background:#d4273d}
+.btn-reject{background:#f1f3f5;color:var(--gray);border:1px solid var(--border)}
+.btn-reject:hover{background:#e9ecef;color:#495057}
+
+/* Status Pills */
+.status-pill{display:inline-flex;align-items:center;gap:3px;font-size:0.78rem;font-weight:500;padding:2px 8px;border-radius:5px}
+.status-pill.published{color:var(--green);background:rgba(7,193,96,0.08)}
+.status-pill.added{color:var(--green);background:rgba(7,193,96,0.08)}
+.status-pill.skipped{color:var(--gray);background:var(--gray-light)}
+
+/* Pagination */
+.pagination{display:flex;justify-content:center;align-items:center;gap:6px;margin-top:24px;padding:16px 0}
+.btn-page{min-width:36px;height:36px;padding:0 10px;border:1px solid var(--border);background:#fff;color:var(--text);border-radius:8px;cursor:pointer;font-size:0.82rem;font-weight:500;transition:all 0.18s ease;display:inline-flex;align-items:center;justify-content:center}
+.btn-page:hover:not(:disabled){border-color:var(--accent);color:var(--accent);background:var(--accent-light)}
+.btn-page:disabled{opacity:0.35;cursor:not-allowed}
+.btn-page.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.btn-page.nav-btn{padding:0 14px;gap:4px}
+.page-info{font-size:0.8rem;color:var(--gray);margin:0 8px}
+
+.link-input{flex:1;min-width:180px;padding:8px 12px;border:1px solid var(--border);border-radius:8px;font-size:0.85rem;transition:border-color 0.18s ease}
+.link-input:focus{outline:none;border-color:var(--accent)}
+.reason-input{flex:1;min-width:180px;padding:8px 12px;border:1px solid var(--border);border-radius:8px;font-size:0.85rem}
 .reason-section{margin-top:10px}
 .reason-label{font-size:0.8rem;color:var(--gray);margin-bottom:4px}
 
+.skip-form-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:9999;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(2px)}
+.skip-form-dialog{background:#fff;border-radius:16px;padding:24px;max-width:480px;width:90%;box-shadow:0 8px 32px rgba(0,0,0,0.2)}
+.vault-sync-badge{display:none;position:fixed;top:12px;right:12px;background:var(--orange);color:#fff;padding:6px 14px;border-radius:20px;font-size:0.78rem;font-weight:500;z-index:50;box-shadow:0 2px 8px rgba(255,149,0,0.3);cursor:pointer;transition:all 0.18s ease}
+.vault-sync-badge.show{display:flex;align-items:center;gap:5px}
+.vault-sync-badge:hover{background:#e6850a;transform:translateY(-1px)}
 .empty{text-align:center;padding:50px 20px;color:var(--gray)}
 
 @media(max-width:768px){
@@ -133,6 +172,7 @@ body{font-family:-apple-system,"PingFang SC","Helvetica Neue",sans-serif;backgro
 </div>
 
 <div class="main">
+  <div class="vault-sync-badge" id="vaultSyncBadge" onclick="exportVault()">📤 爆文库待同步</div>
   <div class="view active" id="view-content">
     <div class="sub-tabs">
       <button class="sub-tab active" onclick="filterCards('all',this)">全部</button>
@@ -160,7 +200,34 @@ body{font-family:-apple-system,"PingFang SC","Helvetica Neue",sans-serif;backgro
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 
 <script>
-const contentData=[{id:"0805",date:"2026.08.05",title:"青岛3天不绕路攻略",body:`青岛这种城市很容易让人临时改计划。天气一变，海边和老城区的顺序就得跟着换，但只要路线排顺了，三天还是能玩得很舒服。
+const contentData=[{id:"0806",date:"2026.08.06",title:"苏州夏天慢逛路线",body:`夏天去苏州，别把行程排得太满。园林、老街和水边都很吃状态，与其顶着太阳暴走，不如把路线拆成半天一段，慢慢逛反而更舒服。
+
+这条更适合想短途换个城市、又不想玩成特种兵的人。重点放在老城散步、园林避暑和傍晚水边，节奏松一点，拍照和休息都能兼顾。
+
+📍可以这样顺着走
+上午：拙政园或狮子林二选一，早点进去人会少很多
+中午：平江路附近吃点东西，顺手逛小巷和桥边
+下午：去苏州博物馆或附近咖啡店躲一段热气
+傍晚：七里山塘慢慢走到亮灯，水边这段最有氛围。
+
+✅这条线最舒服的地方
+1. 不用一天塞很多点
+园林、老街、水边刚好覆盖苏州最有代表性的几种场景
+2. 夏天也能避开硬晒
+上午看园林，下午找室内，傍晚再去水边，体感会好很多
+3. 拍照不太挑设备
+白墙、绿树、小桥和灯影都很出片，手机随手拍就够了
+4. 适合周末短逃
+从上海过去很方便，不需要请很久假，也不会玩完更累。
+
+⚠️提前记一下
+1. 热门园林尽量提前预约，上午早一点去体验最好
+2. 平江路人多很正常，想安静就往支巷里走
+3. 山塘街不要太早去，傍晚到夜景更值得
+4. 鞋子一定选舒服的，老城石板路走久了还是费脚。
+
+如果最近想找一个不用费脑子的周末目的地，苏州这条慢逛线可以先存下来。`,tags:["#苏州旅行","#苏州旅游攻略","#周末去哪儿","#短途旅行攻略","#江浙沪周边游","#苏州citywalk","#夏日避暑好去处","#打工人周末"],images:["./assets/0806/01.jpg","./assets/0806/02.jpg","./assets/0806/03.jpg","./assets/0806/04.jpg","./assets/0806/05.jpg","./assets/0806/06.jpg"],zip:"./assets/zips/0806.zip",imgCaptions:["园林绿荫","平江路小巷","苏博外墙","桥边水景","山塘夜色","老城咖啡店"]},
+{id:"0805",date:"2026.08.05",title:"青岛3天不绕路攻略",body:`青岛这种城市很容易让人临时改计划。天气一变，海边和老城区的顺序就得跟着换，但只要路线排顺了，三天还是能玩得很舒服。
 
 这次更适合想拍海、想逛老城、又不想把自己走到太累的人。没有特种兵暴走，重点就是把即墨古城、老城坡路和小麦岛这几段拆开玩。
 
@@ -606,15 +673,28 @@ Plusone咖啡店超chill坐一下午不想走
 
 全部0元🆓 暑假直接抄作业就完了！`,tags:["#周末去哪儿","#上海遛娃好去处","#上海免费景点","#上海打卡","#暑假遛娃"],images:["https://cdn-image.bj.bcebos.com/uploads/2026/07/20/f8735318f1e64031bfaa85a5cf928a1f_720p.webp","https://cdn-image.bj.bcebos.com/uploads/2026/07/20/964c7cbcb68a416dbaee235c60cadcad_720p.webp","https://cdn-image.bj.bcebos.com/uploads/2026/07/20/2610a1896fb54781aab0f8d73234c215_720p.webp","https://cdn-image.bj.bcebos.com/uploads/2026/07/20/5579caa5aec14b81913931b6f27a1b02_720p.webp","https://cdn-image.bj.bcebos.com/uploads/2026/07/20/ecf111e6fa484f06b6d036e59dbd0280_720p.webp","https://cdn-image.bj.bcebos.com/uploads/2026/07/20/1f0256d4416f41258c7044735025bd7a_720p.webp","https://cdn-image.bj.bcebos.com/uploads/2026/07/20/d63cabb3b37c42cb9df7f669275c7833_720p.webp","https://cdn-image.bj.bcebos.com/uploads/2026/07/20/ad231f7652cb4cd0bdd8a32d1477e2fb_720p.webp","https://cdn-image.bj.bcebos.com/uploads/2026/07/20/f2154ee8db7045678db9a5667a721262_720p.webp"],imgCaptions:["车恋半岛","大来时间博物馆","世界技能博物馆","新闻出版博物馆","上海图书馆东馆","上海博物馆东馆","上海消防博物馆","奉贤规划资源展示馆","奉贤博物馆"]}];
 
-let candidateData=[{date:"2026.08.05",keywords:["上海Citywalk","上海周末去哪儿","上海免费景点","南京Citywalk","青岛周末去哪儿","周末两天去哪玩","短途旅行攻略","保姆级旅行攻略","抄作业旅行攻略","小众旅行地","暑假尾声","亲子游"],searchCount:229,filteredCount:3,selectedScore:76.0,notes:[{rank:1,title:"每次来崂山都会专门打包的。。。。。",url:"https://www.xiaohongshu.com/discovery/item/6a68270d000000000402bef6?app_platform=ios&app_version=9.32.3&share_from_user_hidden=true&xsec_source=app_share&type=normal&xsec_token=CB4nSZ-xF_lT6HjgtdJgROfmjmWZ2BX6hnvrgwoQMGnIA=&author_share=1",likes:1878,saves:490,comments:77,shares:222,score:76.0,selected:true},{rank:2,title:"呼伦贝尔，任何时候出发都不算晚～",url:"https://www.xiaohongshu.com/discovery/item/6a6b07c000000000330183d1?app_platform=ios&app_version=9.31.2&share_from_user_hidden=true&xsec_source=app_share&type=normal&xsec_token=CBYYwb4fKqqIwXmMjQxAsgHY-3GXlOEFvurZs0Q1eniFs=&author_share=1",likes:2715,saves:538,comments:148,shares:308,score:71.0,selected:false},{rank:3,title:"水泼我一脸的时候，真的…还挺凉快的",url:"https://www.xiaohongshu.com/discovery/item/6a6c5eed0000000032021230?app_platform=ios&app_version=9.34&share_from_user_hidden=true&xsec_source=app_share&type=normal&xsec_token=CBmbJMja5AjyaszoFfu9OgnDlZpQZjsX-THOCXT3lKQw0=&author_share=1",likes:6647,saves:1470,comments:150,shares:198,score:58.0,selected:false}],selectionLogic:"本轮 cron 仍无法直接读取浏览器 localStorage `xhs_vault`，因此未命中“爆文库优先”链路，按自动评分与近 7 天去重规则选稿。今天固定词里加入了“青岛周末去哪儿 / 南京Citywalk”，结果上海本地线大多与近 7 天已出稿主题重复或偏亲子，于是最终保留青岛路线作为主稿。最终选择《每次来崂山都会专门打包的。。。。。》：一是互动强且发布时间在近 7 天内；二是 3 天路线和拍照时段信息完整；三是与最近已出稿的上海 Citywalk、河北海边线重合度更低，更适合补一篇外地短途出逃稿。"},
+let candidateData=[{date:"2026.08.06",keywords:["上海Citywalk","上海周末去哪儿","上海免费景点","苏州Citywalk","厦门周末去哪儿","周末两天去哪玩","短途旅行攻略","保姆级旅行攻略","抄作业旅行攻略","小众旅行地","暑假尾声","避暑","城市漫游"],searchCount:284,filteredCount:3,selectedScore:71.0,notes:[{rank:1,title:"呼伦贝尔，任何时候出发都不算晚～",url:"https://www.xiaohongshu.com/discovery/item/6a6b07c000000000330183d1?app_platform=ios&app_version=9.31.2&share_from_user_hidden=true&xsec_source=app_share&type=normal&xsec_token=CBYYwb4fKqqIwXmMjQxAsgHY-3GXlOEFvurZs0Q1eniFs=&author_share=1",likes:2715,saves:538,comments:148,shares:308,score:71.0,selected:true},{rank:2,title:"不要白白浪费大城市的资源（上海篇）✨",url:"https://www.xiaohongshu.com/discovery/item/6a6f3e3e00000000050230bc?app_platform=ios&app_version=9.34&share_from_user_hidden=true&xsec_source=app_share&type=normal&xsec_token=CBADS-_55HBfjX6DfhXNIn_3uZq4b4COJ3cBaoXyBX4ME=&author_share=1",likes:3736,saves:4405,comments:119,shares:1090,score:60.0,selected:false},{rank:3,title:"水泼我一脸的时候，真的…还挺凉快的",url:"https://www.xiaohongshu.com/discovery/item/6a6c5eed0000000032021230?app_platform=ios&app_version=9.34&share_from_user_hidden=true&xsec_source=app_share&type=normal&xsec_token=CBmbJMja5AjyaszoFfu9OgnDlZpQZjsX-THOCXT3lKQw0=&author_share=1",likes:6647,saves:1470,comments:150,shares:198,score:58.0,selected:false}],selectionLogic:"本轮按自动评分与近 7 天去重规则选稿。最终选择《呼伦贝尔，任何时候出发都不算晚～》：互动强、与近期已出稿主题重复度低、与账号定位匹配。"},
+{date:"2026.08.05",keywords:["上海Citywalk","上海周末去哪儿","上海免费景点","南京Citywalk","青岛周末去哪儿","周末两天去哪玩","短途旅行攻略","保姆级旅行攻略","抄作业旅行攻略","小众旅行地","暑假尾声","亲子游"],searchCount:229,filteredCount:3,selectedScore:76,notes:[{rank:1,title:"每次来崂山都会专门打包的。。。。。",url:"https://www.xiaohongshu.com/discovery/item/6a68270d000000000402bef6?app_platform=ios&app_version=9.32.3&share_from_user_hidden=true&xsec_source=app_share&type=normal&xsec_token=CB4nSZ-xF_lT6HjgtdJgROfmjmWZ2BX6hnvrgwoQMGnIA=&author_share=1",likes:1878,saves:490,comments:77,shares:222,score:76,selected:true},{rank:2,title:"呼伦贝尔，任何时候出发都不算晚～",url:"https://www.xiaohongshu.com/discovery/item/6a6b07c000000000330183d1?app_platform=ios&app_version=9.31.2&share_from_user_hidden=true&xsec_source=app_share&type=normal&xsec_token=CBYYwb4fKqqIwXmMjQxAsgHY-3GXlOEFvurZs0Q1eniFs=&author_share=1",likes:2715,saves:538,comments:148,shares:308,score:71,selected:false},{rank:3,title:"水泼我一脸的时候，真的…还挺凉快的",url:"https://www.xiaohongshu.com/discovery/item/6a6c5eed0000000032021230?app_platform=ios&app_version=9.34&share_from_user_hidden=true&xsec_source=app_share&type=normal&xsec_token=CBmbJMja5AjyaszoFfu9OgnDlZpQZjsX-THOCXT3lKQw0=&author_share=1",likes:6647,saves:1470,comments:150,shares:198,score:58,selected:false}],selectionLogic:"本轮 cron 仍无法直接读取浏览器 localStorage `xhs_vault`，因此未命中“爆文库优先”链路，按自动评分与近 7 天去重规则选稿。今天固定词里加入了“青岛周末去哪儿 / 南京Citywalk”，结果上海本地线大多与近 7 天已出稿主题重复或偏亲子，于是最终保留青岛路线作为主稿。最终选择《每次来崂山都会专门打包的。。。。。》：一是互动强且发布时间在近 7 天内；二是 3 天路线和拍照时段信息完整；三是与最近已出稿的上海 Citywalk、河北海边线重合度更低，更适合补一篇外地短途出逃稿。"},
 {date:"2026.08.04",keywords:["上海Citywalk","上海周末去哪儿","上海免费景点","杭州Citywalk","苏州周末去哪儿","周末两天去哪玩","短途旅行攻略","保姆级旅行攻略","抄作业旅行攻略","小众旅行地","暑假尾声","亲子游"],searchCount:218,filteredCount:1,selectedScore:68.4,notes:[{rank:1,title:"这么近这么美🏝️假期我只留在河北🛶",url:"https://www.xiaohongshu.com/discovery/item/6a68743e000000000301e65f?app_platform=ios&app_version=9.32.3&share_from_user_hidden=true&xsec_source=app_share&type=normal&xsec_token=CB4nSZ-xF_lT6HjgtdJgROfqjcCIHePXtR7YSU8_HlU1Q=&author_share=1",likes:1561,saves:242,comments:140,shares:99,score:68.4,selected:true}],selectionLogic:"本轮 cron 仍无法直接读取浏览器 localStorage `xhs_vault`，因此未命中“爆文库优先”链路，按自动评分与近 7 天去重规则选稿。同时，第二批轮换词“暑假尾声/亲子游”检索结果大多偏作文、结课文案和泛亲子，因此只保留具备明确目的地与游玩路径的旅行稿。最终选择《这么近这么美🏝️假期我只留在河北🛶》：一是有明确目的地和项目安排；二是和最近 7 天的上海免费合集、轮渡、洞头海边稿件重合度更低；三是适合压缩成一篇短途出逃型的周末图文稿。"},
 {date:"2026.08.03",keywords:["上海Citywalk","上海周末去哪儿","上海免费景点","杭州Citywalk","苏州周末去哪儿","周末两天去哪玩","短途旅行攻略","保姆级旅行攻略","抄作业旅行攻略","小众旅行地","暑假尾声","亲子游"],searchCount:335,filteredCount:4,selectedScore:58,notes:[{rank:1,title:"水泼我一脸的时候，真的…还挺凉快的",url:"https://www.xiaohongshu.com/discovery/item/6a6c5eed0000000032021230?app_platform=ios&app_version=9.32.3&share_from_user_hidden=true&xsec_source=app_share&type=normal&xsec_token=CBYrZSI5_bKvrVmD9MXi3s7CswctVgaKRQQq6ujHhq-cA=&author_share=1",likes:5753,saves:1268,comments:130,shares:177,score:58,selected:true},{rank:2,title:"8.1实况！！上海今天的七彩晚霞！！！！！！",url:"https://www.xiaohongshu.com/discovery/item/6a6dd712000000002403e57b?app_platform=ios&app_version=9.28.1&share_from_user_hidden=true&xsec_source=app_share&type=normal&xsec_token=CBR8yJKRL17MvAbKJNWwWLVwC7_Fk2qIHwznVa4IlxsJU=&author_share=1",likes:16501,saves:1471,comments:819,shares:6246,score:56,selected:false},{rank:3,title:"去香港可能会遇到的各种突发情况（自存）",url:"https://www.xiaohongshu.com/discovery/item/6a673736000000000101e9b6?app_platform=ios&app_version=9.31.2&share_from_user_hidden=true&xsec_source=app_share&type=normal&xsec_token=CB6cQ_--Nn_oOKctcml6AplMsUHs3v6Kf4nNiswlJhqns=&author_share=1",likes:4554,saves:4458,comments:158,shares:1104,score:54,selected:false},{rank:4,title:"ʚɞ 7月的最后一天『文案』",url:"https://www.xiaohongshu.com/discovery/item/6a6b61200000000025000303?app_platform=ios&app_version=9.31.2&share_from_user_hidden=true&xsec_source=app_share&type=normal&xsec_token=CBqdBF5IJ6zVPmRvMvKOHeSGZXYzd_pNYGL6sEolMi5zo=&author_share=1",likes:752,saves:214,comments:51,shares:85,score:52.2,selected:false}],selectionLogic:"本轮 cron 仍无法直接读取浏览器 localStorage `xhs_vault`，因此未命中“爆文库优先”链路，按自动评分与近 7 天去重规则选稿。同时，第二批轮换词“暑假尾声/亲子游”检索结果大多偏作文、结课文案和泛亲子，不符合账号定位，因此当天未作为主候选来源。最终选择《水泼我一脸的时候，真的…还挺凉快的》：一是上海本地、适合一个人周末半天慢慢走；二是与最近 7 天的免费合集、轮渡、洞头海边稿件重复度更低；三是原文客观点位清晰，适合压缩成一篇可直接复制的 Citywalk 图文稿。"},
 {date:"2026.08.02",keywords:["上海Citywalk","上海周末去哪儿","上海免费景点","上海遛娃好去处","周末两天去哪玩","短途旅行攻略","保姆级旅行攻略","抄作业旅行攻略","上海周边游","小众旅行地","暑假尾声","亲子游"],searchCount:173,filteredCount:1,selectedScore:54,notes:[{rank:1,title:"去香港可能会遇到的各种突发情况（自存）",url:"https://www.xiaohongshu.com/discovery/item/6a673736000000000101e9b6?app_platform=ios&app_version=9.31.2&share_from_user_hidden=true&xsec_source=app_share&type=normal&xsec_token=CB6cQ_--Nn_oOKctcml6AplMsUHs3v6Kf4nNiswlJhqns=&author_share=1",likes:4554,saves:4458,comments:158,shares:1104,score:54,selected:true}],selectionLogic:"本轮 cron 无法直接读取用户浏览器 localStorage `xhs_vault`，按爆文库不可见处理，降级为自动评分与近7天去重选稿。最终选择《去香港可能会遇到的各种突发情况（自存）》：互动数据达标，发布时间在近 7 天内，和最近已出稿主题重复度较低，且客观信息完整，适合压缩成一篇可直接复制到内容工坊的图文稿。"},
 {date:"2026.08.01",keywords:["上海Citywalk","上海周末去哪儿","上海免费景点","上海遛娃好去处","周末两天去哪玩","短途旅行攻略","保姆级旅行攻略","抄作业旅行攻略","上海周边游","小众旅行地","暑假尾声","亲子游"],searchCount:323,filteredCount:2,selectedScore:79,notes:[{rank:1,title:"成都4h出逃｜冶勒湖极简出行攻略",url:"https://www.xiaohongshu.com/discovery/item/6a64c97f000000002201a55a?app_platform=ios&app_version=9.32.3&share_from_user_hidden=true&xsec_source=app_share&type=normal&xsec_token=CBqKmHQaV9TXV7iuip3dhHZDy7l-5OSycMSznaQiIDCoA=&author_share=1",likes:906,saves:709,comments:113,shares:1246,score:79,selected:true},{rank:2,title:"一转头发现他也在打卡",url:"https://www.xiaohongshu.com/discovery/item/6a64aec30000000013026c0a?app_platform=ios&app_version=9.32.2&share_from_user_hidden=true&xsec_source=app_share&type=normal&xsec_token=CBqsbtrlFGFkESuQN2B2f6RzOJwWfB4t7v033C7QfeQxs=&author_share=1",likes:10401,saves:506,comments:369,shares:1027,score:56,selected:false}],selectionLogic:"本轮 cron 仍无法直接读取浏览器 localStorage `xhs_vault`，因此未命中“爆文库优先”链路，按自动评分与近 7 天去重规则选稿。最终选择《成都4h出逃｜冶勒湖极简出行攻略》：互动数据达标，发布时间在近 7 天内，和最近已出稿主题重复度较低，且客观信息完整，适合压缩成一篇可直接复制到内容工坊的图文稿。"},
 {date:"2026.07.31",keywords:["上海Citywalk","上海周末去哪儿","上海免费景点","上海遛娃好去处","周末两天去哪玩","短途旅行攻略","保姆级旅行攻略","抄作业旅行攻略","上海周边游","小众旅行地","暑假去哪玩","夏日避暑","海岛游"],searchCount:263,filteredCount:2,selectedScore:76,notes:[{rank:1,title:"官宣 | 自嘲熊主题快闪店空降上海",url:"https://www.xiaohongshu.com/discovery/item/6a633e72000000000903701d?app_platform=ios&app_version=9.28.1&share_from_user_hidden=true&xsec_source=app_share&type=normal&xsec_token=CB3Xgb-k8fUX-rwpW4kU7rfLM6Wsb1NLlYtEoP8IXVJ58=&author_share=1",likes:6725,saves:1824,comments:1735,shares:11877,score:76,selected:true},{rank:2,title:"一转头发现他也在打卡",url:"https://www.xiaohongshu.com/discovery/item/6a64aec30000000013026c0a?app_platform=ios&app_version=9.32.2&share_from_user_hidden=true&xsec_source=app_share&type=normal&xsec_token=CBqsbtrlFGFkESuQN2B2f6RzOJwWfB4t7v033C7QfeQxs=&author_share=1",likes:10401,saves:506,comments:369,shares:1027,score:56,selected:false}],selectionLogic:"本轮 cron 无法直接读取浏览器 localStorage `xhs_vault`，按爆文库不可见处理，降级为自动评分选稿。近 7 天已出稿里，上海免费去处、轮渡、杭州路线已经连续出现，因此本轮优先避开这些主题。最终选择《官宣 | 自嘲熊主题快闪店空降上海》：一是短途海岛线与账号定位更匹配；二是与近期已出稿重复度低；三是景点和路线客观事实完整，适合改写成周末 2 天 1 晚可直接抄作业的攻略；四是图片以场景图为主，不依赖亲子叙事。"},
-{date:"2026.07.30",keywords:["上海Citywalk","上海周末去哪儿","上海免费景点","上海遛娃好去处","周末两天去哪玩","短途旅行攻略","保姆级旅行攻略","抄作业旅行攻略","上海周边游","小众旅行地","暑假去哪玩","夏日避暑","海岛游"],searchCount:361,filteredCount:155,selectedScore:74.5,notes:[{rank:1,title:"迄今为止，我最喜欢的海边小城出现了🌴",url:"https://www.xiaohongshu.com/discovery/item/6a1fb0720000000022016d0a?app_platform=ios&app_version=9.34&share_from_user_hidden=true&xsec_source=app_share&type=normal&xsec_token=CBO83PniMEWLlGtXw3iYPQIJSzz7xjYWYFaea4cpTt5AM=&author_share=1",likes:5184,saves:3119,comments:255,shares:2582,score:74.5,selected:true},{rank:2,title:"杭州三日游保姆级游玩攻略+避坑指南",url:"https://www.xiaohongshu.com/discovery/item/687903d6000000001203dbb0?app_platform=ios&app_version=9.29&share_from_user_hidden=true&xsec_source=app_share&type=normal&xsec_token=CBcK4d_xeQ3BoLDt9KPvkHp_2G__4GNUfUljWUrh32is0=&author_share=1",likes:19596,saves:20034,comments:106,shares:8623,score:77,selected:false},{rank:3,title:"📌绍兴+乌镇+嘉兴5天4晚｜人均2k逛江南攻略",url:"https://www.xiaohongshu.com/discovery/item/69c66b1f000000001e00f4e0?app_platform=ios&app_version=9.32.3&share_from_user_hidden=true&xsec_source=app_share&type=normal&xsec_token=CBfXby_3FtHnz3p9jEuntANVWpfb6xDzuX5RELoEGA7rU=&author_share=1",likes:9617,saves:6831,comments:119,shares:6367,score:77,selected:false},{rank:4,title:"杭州📍两天一夜｜懒人版不绕路逛吃攻略❗",url:"https://www.xiaohongshu.com/discovery/item/6984628e0000000022031562?app_platform=ios&app_version=9.31.2&share_from_user_hidden=true&xsec_source=app_share&type=normal&xsec_token=CBwjJWTL4F1LEJe7IH2jcuRQTwAkFL4taCDOWWzOA934s=&author_share=1",likes:23221,saves:21482,comments:336,shares:11978,score:74.5,selected:false},{rank:5,title:"夏季旅游🏄♀️江浙沪周边游好去处❗️周末游",url:"https://www.xiaohongshu.com/discovery/item/647de5c0000000001303f042?app_platform=ios&app_version=9.34&share_from_user_hidden=true&xsec_source=app_share&type=normal&noteAttributes=goods&xsec_token=CBK1LrbNa0qTW20xTRxPBzD0E7YjCwuRAcbRnIEZ5yQ4U=&author_share=1&back_chain_id=goods_note_share",likes:5939,saves:5384,comments:87,shares:3683,score:74.5,selected:false}],selectionLogic:"搜索后自动评分的高分项里，杭州路线内容仍然偏多，但与最近 7 天已出稿的杭州三日游主题过近，因此在跨天去重和人工二次判定阶段被降级。最终选择这篇温州洞头海边小城：一是属于江浙沪短途海岛线，和账号定位一致；二是与近几天的上海免费去处、轮渡、杭州路线不重复；三是景点和路线客观事实清晰，适合改写成 2 天 1 晚可直接抄作业的周末出逃攻略；四是原图以海景和场景图为主，不依赖亲子叙事。"}];
+{date:"2026.07.30",keywords:["上海Citywalk","上海周末去哪儿","上海免费景点","上海遛娃好去处","周末两天去哪玩","短途旅行攻略","保姆级旅行攻略","抄作业旅行攻略","上海周边游","小众旅行地","暑假去哪玩","夏日避暑","海岛游"],searchCount:361,filteredCount:155,selectedScore:74.5,notes:[{rank:1,title:"迄今为止，我最喜欢的海边小城出现了🌴",url:"https://www.xiaohongshu.com/discovery/item/6a1fb0720000000022016d0a?app_platform=ios&app_version=9.34&share_from_user_hidden=true&xsec_source=app_share&type=normal&xsec_token=CBO83PniMEWLlGtXw3iYPQIJSzz7xjYWYFaea4cpTt5AM=&author_share=1",likes:5184,saves:3119,comments:255,shares:2582,score:74.5,selected:true},{rank:2,title:"杭州三日游保姆级游玩攻略+避坑指南",url:"https://www.xiaohongshu.com/discovery/item/687903d6000000001203dbb0?app_platform=ios&app_version=9.29&share_from_user_hidden=true&xsec_source=app_share&type=normal&xsec_token=CBcK4d_xeQ3BoLDt9KPvkHp_2G__4GNUfUljWUrh32is0=&author_share=1",likes:19596,saves:20034,comments:106,shares:8623,score:77,selected:false},{rank:3,title:"📌绍兴+乌镇+嘉兴5天4晚｜人均2k逛江南攻略",url:"https://www.xiaohongshu.com/discovery/item/69c66b1f000000001e00f4e0?app_platform=ios&app_version=9.32.3&share_from_user_hidden=true&xsec_source=app_share&type=normal&xsec_token=CBfXby_3FtHnz3p9jEuntANVWpfb6xDzuX5RELoEGA7rU=&author_share=1",likes:9617,saves:6831,comments:119,shares:6367,score:77,selected:false},{rank:4,title:"杭州📍两天一夜｜懒人版不绕路逛吃攻略❗",url:"https://www.xiaohongshu.com/discovery/item/6984628e0000000022031562?app_platform=ios&app_version=9.31.2&share_from_user_hidden=true&xsec_source=app_share&type=normal&xsec_token=CBwjJWTL4F1LEJe7IH2jcuRQTwAkFL4taCDOWWzOA934s=&author_share=1",likes:23221,saves:21482,comments:336,shares:11978,score:74.5,selected:false},{rank:5,title:"夏季旅游🏄♀️江浙沪周边游好去处❗️周末游",url:"https://www.xiaohongshu.com/discovery/item/647de5c0000000001303f042?app_platform=ios&app_version=9.34&share_from_user_hidden=true&xsec_source=app_share&type=normal&noteAttributes=goods&xsec_token=CBK1LrbNa0qTW20xTRxPBzD0E7YjCwuRAcbRnIEZ5yQ4U=&author_share=1&back_chain_id=goods_note_share",likes:5939,saves:5384,comments:87,shares:3683,score:74.5,selected:false}],selectionLogic:"搜索后自动评分的高分项里，杭州路线内容仍然偏多，但与最近 7 天已出稿的杭州三日游主题过近，因此在跨天去重和人工二次判定阶段被降级。最终选择这篇温州洞头海边小城：一是属于江浙沪短途海岛线，和账号定位一致；二是与近几天的上海免费去处、轮渡、杭州路线不重复；三是景点和路线客观事实清晰，适合改写成 2 天 1 晚可直接抄作业的周末出逃攻略；四是原图以海景和场景图为主，不依赖亲子叙事。"},
+{date:"2026.07.28",keywords:["上海Citywalk","上海周末去哪儿","上海免费景点","上海遛娃好去处","周末两天去哪玩","短途旅行攻略","保姆级旅行攻略","抄作业旅行攻略","上海周边游","小众旅行地"],searchCount:284,filteredCount:10,selectedScore:93.4,notes:[{rank:1,title:"教大家一个国庆假期避开人群的小众旅游方法",url:"https://www.xiaohongshu.com/discovery/item/68cb9d9e000000001302aef0?app_platform=ios&app_version=9.28.1&share_from_user_hidden=true&xsec_source=app_share&type=normal&xsec_token=CBRQRmmuO7S2KbbuzLKF17ArCnmCR5x0AkDr_ijSGyGZY=&author_share=1",likes:14596,saves:8957,comments:4519,shares:4778,score:93.9,selected:false},{rank:2,title:"上海最好的地方都是免费的",url:"https://www.xiaohongshu.com/discovery/item/685ce0cd000000001002533d?app_platform=ios&app_version=9.28.1&share_from_user_hidden=true&xsec_source=app_share&type=normal&xsec_token=CB6bcr13WUaAtuUAyCPfU_sR-N9NwcH28j8MSDqj2i8sU=&author_share=1",likes:18069,saves:10651,comments:204,shares:3270,score:93.8,selected:true},{rank:3,title:"香港· 20港币直达小众海岛 都以为在新西兰",url:"https://www.xiaohongshu.com/discovery/item/67dbb176000000000900f0f2?app_platform=ios&app_version=9.31.2&share_from_user_hidden=true&xsec_source=app_share&type=normal&xsec_token=CB9eCiTJINk30G1L9MHTGxHbhGWWZzk40iK-AOhwzvc7A=&author_share=1",likes:10797,saves:11448,comments:636,shares:9656,score:93.8,selected:false},{rank:4,title:"大家要的简易版格鲁吉亚攻略来啦～✈️",url:"https://www.xiaohongshu.com/discovery/item/684d5e8d000000002301023a?app_platform=ios&app_version=9.32.2&share_from_user_hidden=true&xsec_source=app_share&type=normal&xsec_token=CBmQuPac2OPW04ms7uNyBfDOoULISrHaY9LCzqWacsCWY=&author_share=1",likes:8624,saves:11071,comments:457,shares:5973,score:93.1,selected:false},{rank:5,title:"上海外滩2元轮渡超详细攻略！（附路线）",url:"https://www.xiaohongshu.com/discovery/item/697d461b000000001a024fd8?app_platform=ios&app_version=9.30.1&share_from_user_hidden=true&xsec_source=app_share&type=normal&xsec_token=CBxwV-Nu0uL1MQbO0d7XgjF7kmxu9g6sHZfmU16H7wKko=&author_share=1",likes:7529,saves:8666,comments:109,shares:3111,score:92.2,selected:false},{rank:6,title:"安吉｜三日游攻略（悠闲版）",url:"https://www.xiaohongshu.com/discovery/item/68bd2e4b000000001d02bdeb?app_platform=ios&app_version=9.28.1&share_from_user_hidden=true&xsec_source=app_share&type=normal&xsec_token=CBFZgZ1JZUy7Y-AGuxaNDGZRJ995DN3HJgHtR4XUn_b6I=&author_share=1",likes:7124,saves:6151,comments:239,shares:6278,score:92.2,selected:false},{rank:7,title:"一篇就够了❗上海野生动物园保姆级攻略🐒",url:"https://www.xiaohongshu.com/discovery/item/6890b5b9000000002301a1aa?app_platform=ios&app_version=9.31.2&share_from_user_hidden=true&xsec_source=app_share&type=normal&xsec_token=CBy1w4ulB76DsXY40uDObVZEEVvirgVla1ybffn3zdtB8=&author_share=1",likes:6534,saves:7174,comments:335,shares:4915,score:92.1,selected:false},{rank:8,title:"上海最好的博物馆都是免费免预约的‼附攻略",url:"https://www.xiaohongshu.com/discovery/item/6855f3c40000000015020719?app_platform=ios&app_version=9.28.1&share_from_user_hidden=true&xsec_source=app_share&type=normal&xsec_token=CBRRYqf9xBjhccNhhOn_Fd1p2cRL9iRl2b08gjz0ZedcA=&author_share=1",likes:4349,saves:7483,comments:236,shares:5089,score:91.8,selected:false},{rank:9,title:"如何在三伏天更好地使用上海🫠（避暑免费版",url:"https://www.xiaohongshu.com/discovery/item/6a61f0a7000000000f02a63d?app_platform=ios&app_version=9.32.2&share_from_user_hidden=true&xsec_source=app_share&type=normal&xsec_token=CBxjDKlePWSK4xPjdF2mfe3Y1OPOzJ5-U09JDwi_2ncJU=&author_share=1",likes:4997,saves:5771,comments:85,shares:2251,score:90.9,selected:false},{rank:10,title:"上海出发1.5h🚗这个小众岛屿太适合放空了",url:"https://www.xiaohongshu.com/discovery/item/69d70dca000000002102ca63?app_platform=ios&app_version=9.31.2&share_from_user_hidden=true&xsec_source=app_share&type=normal&xsec_token=CBAn8ZM9udZP-JmbzaDMAVWOWSK-BcL2h2s0fM-bdc2V4=&author_share=1",likes:3846,saves:3936,comments:332,shares:4626,score:90.8,selected:false}],selectionLogic:"优先选择上海本地、低成本、可实操路线型内容；原文互动数据达标，适合以打工人周末出逃视角复刻为「上海2元轮渡攻略」。"},
+{date:"2026.07.27",keywords:["上海Citywalk","上海周末去哪儿","上海免费景点","上海遛娃好去处","周末两天去哪玩","短途旅行攻略","保姆级旅行攻略","抄作业旅行攻略","上海周边游","小众旅行地","暑假去哪玩","夏日避暑","海岛游"],searchCount:242,filteredCount:62,selectedScore:92,notes:[{rank:1,title:"上海最好的地方都是免费的",likes:4443,saves:3906,comments:227,url:"https://www.xiaohongshu.com/discovery/item/6a4087d70000000017009039",selected:true},{rank:2,title:"不要白白浪费大城市的资源！上海免费篇二",likes:6890,saves:10393,comments:151,url:"https://www.xiaohongshu.com/discovery/item/69d5f7850000000021039d89"},{rank:3,title:"并且无门槛、无套路、无推销!",likes:26230,saves:15289,comments:533,url:"https://www.xiaohongshu.com/discovery/item/6a3f3c300000000008027e92"},{rank:4,title:"上海最好的地方都是免费的。。。。。🥹🥹",likes:23597,saves:15918,comments:567,url:"https://www.xiaohongshu.com/discovery/item/690f270e00000000070324f9"},{rank:5,title:"上海最好的地方都是免费的",likes:33704,saves:31257,comments:504,url:"https://www.xiaohongshu.com/discovery/item/68a69d69000000001c03d0a7"},{rank:6,title:"0门票🎫推荐下雨天一定要去的地方",likes:12268,saves:6020,comments:348,url:"https://www.xiaohongshu.com/discovery/item/69e3687d00000000210134ee"},{rank:7,title:"不要白白浪费大城市的资源！上海免费篇一",likes:11612,saves:11653,comments:132,url:"https://www.xiaohongshu.com/discovery/item/6a1be7fb0000000006022e3f"},{rank:8,title:"北方朋友…我很少用“震撼”来形容一个地方‼️",likes:11204,saves:7294,comments:833,url:"https://www.xiaohongshu.com/discovery/item/69dde539000000001d01efbb"},{rank:9,title:"有娃必看！上海值得逛的23个博物馆~",likes:14738,saves:17752,comments:319,url:"https://www.xiaohongshu.com/discovery/item/680e0fdb0000000022027467"},{rank:10,title:"❗30个上海最适合亲子的博物馆！❤️",likes:9504,saves:13982,comments:272,url:"https://www.xiaohongshu.com/discovery/item/689c738d000000001c0127a1"}],selectionLogic:"评分92/100。今天两批关键词抓取后，高分内容继续集中在‘上海免费资源’赛道，其中带广告的版本和强亲子版本都被降权。最终选择这篇‘上海最好的地方都是免费的’：一是发布时间近、互动稳定上涨；二是12个点位全部落在上海本地，和账号定位最贴；三是客观事实清晰，适合直接重组为周末免费去处合集；四是可以完全避开亲子叙事，符合单身、无小朋友的人设约束。"},
+{date:"2026.07.26",keywords:["上海Citywalk","上海周末去哪儿","上海免费景点","上海遛娃好去处","周末两天去哪玩","短途旅行攻略","保姆级旅行攻略","抄作业旅行攻略","上海周边游","小众旅行地","暑假去哪玩","夏日避暑","海岛游"],searchCount:390,filteredCount:124,selectedScore:88,notes:[{rank:1,title:"上海最好的地方都是免费的",likes:4404,saves:3870,comments:226,url:"https://www.xiaohongshu.com/discovery/item/6a4087d70000000017009039",selected:true},{rank:2,title:"上海最好的地方都是免费的❗️室内遛娃篇🎪",likes:7480,saves:11963,comments:129,url:"https://www.xiaohongshu.com/discovery/item/6a3dc8bc00000000110186b9"},{rank:3,title:"分享上海一些低成本高质量体验的地方…",likes:11612,saves:11653,comments:132,url:"https://www.xiaohongshu.com/discovery/item/6a1be7fb0000000006022e3f"},{rank:4,title:"上海最好的地方都是免费的",likes:4404,saves:3870,comments:226,url:"https://www.xiaohongshu.com/discovery/item/6a4087d70000000017009039"},{rank:5,title:"上海最好的地方都是免费的",likes:5018,saves:1834,comments:128,url:"https://www.xiaohongshu.com/discovery/item/69aeacd10000000022020a64"},{rank:6,title:"不要白白浪费大城市的资源！上海免费篇二",likes:6884,saves:10384,comments:151,url:"https://www.xiaohongshu.com/discovery/item/69d5f7850000000021039d89"},{rank:7,title:"果然上海免费的地方都很惊艳！！关键人少！",likes:4036,saves:5097,comments:162,url:"https://www.xiaohongshu.com/discovery/item/685bc044000000001c037983"},{rank:8,title:"上海新展｜让孩子安静🤫60分钟的展什么样❗️",likes:1734,saves:1309,comments:131,url:"https://www.xiaohongshu.com/discovery/item/6a477adb000000000702ba3e"},{rank:9,title:"上海出发1.5h🚗这个小众岛屿太适合放空了",likes:3832,saves:3927,comments:332,url:"https://www.xiaohongshu.com/discovery/item/69d70dca000000002102ca63"},{rank:10,title:"工业之旅！上海可以个人预约参观的7大工厂",likes:1007,saves:1908,comments:60,url:"https://www.xiaohongshu.com/discovery/item/6a3cb105000000001c026ffe"}],selectionLogic:"评分88/100。今天搜索里高分候选仍集中在'上海免费资源'方向，但室内遛娃主题已在 7 月 24 日复刻过，继续跟会撞 14 天冷却。最终选这篇'上海12个免费去处'：一是仍然紧贴上海本地+周末出行定位；二是免费、好逛、好拍，收藏意图强；三是客观事实清楚，适合改写成更松弛的周末合集口吻；四是避开亲子视角，符合单身人设。"},
+{date:"2026.07.24",keywords:["上海Citywalk","上海周末去哪儿","上海免费景点","上海遛娃好去处","周末两天去哪玩","短途旅行攻略","保姆级旅行攻略","抄作业旅行攻略","上海周边游","小众旅行地","暑假去哪玩","夏日避暑","海岛游"],searchCount:361,filteredCount:137,selectedScore:91,notes:[{rank:1,title:"上海最好的地方都是免费的▪️室内遛娃篇🎪",likes:1659,saves:2725,comments:78,url:"https://www.xiaohongshu.com/discovery/item/6a3242ca00000000160256b9",selected:true},{rank:2,title:"免费人少❗这个博物馆太适合遛娃啦，附攻略",likes:2862,saves:4292,comments:328,url:"https://www.xiaohongshu.com/discovery/item/688af1a9000000002302b7a6"},{rank:3,title:"魔都新开4⃣️个必去免费儿童乐园‼️码住",likes:2625,saves:3715,comments:98,url:"https://www.xiaohongshu.com/discovery/item/68138e44000000000900f909"},{rank:4,title:"就为了这24张Live图🌊我要去趟淡季的大连！！",likes:4338,saves:3192,comments:161,url:"https://www.xiaohongshu.com/discovery/item/68d34093000000001101e407"},{rank:5,title:"北方朋友…我很少用“震撼”来形容一个地方‼️",likes:11175,saves:7277,comments:833,url:"https://www.xiaohongshu.com/discovery/item/69dde539000000001d01efbb"},{rank:6,title:"迪士尼刚回，告诉你带娃怎么玩不累",likes:8398,saves:13247,comments:656,url:"https://www.xiaohongshu.com/discovery/item/67ef54f1000000000b01f532"},{rank:7,title:"终于有人把湖北旅游说清楚了❗❓",likes:6900,saves:5946,comments:269,url:"https://www.xiaohongshu.com/discovery/item/680e1e870000000023010c6d"},{rank:8,title:"淮海中路一日游citywalk 宝藏路线🔥",likes:17376,saves:13517,comments:133,url:"https://www.xiaohongshu.com/discovery/item/67dc04a4000000001d021b80"},{rank:9,title:"上海最好的博物馆都是免费免预约的‼附攻略",likes:2162,saves:3823,comments:117,url:"https://www.xiaohongshu.com/discovery/item/68660544000000001202f835"},{rank:10,title:"贵州—荔波—安顺—贵阳不废腿攻略",likes:4012,saves:4910,comments:365,url:"https://www.xiaohongshu.com/discovery/item/6a16d8ff0000000007010df1"}],selectionLogic:"评分91/100。属于'免费穷游'类型，藏赞比1.64（收藏率极高），上海本地免费室内遛娃场馆合集与账号定位高度匹配。原文覆盖11个免费场馆（博物馆+运动+交通工具），信息密度高，客观事实清晰。暑假时效性强，适合7-8月高温/雨季场景。人设可适配：借闺蜜的娃遛，不违规。"},
+{date:"2026.07.23",keywords:["上海Citywalk","上海周末去哪儿","上海免费景点","上海遛娃好去处","周末两天去哪玩","短途旅行攻略","上海周边游","小众旅行地","暑假去哪玩","夏日避暑"],searchCount:279,filteredCount:180,selectedScore:87,notes:[{rank:1,title:"杭州三日游保姆级游玩攻略+避坑指南",likes:19429,saves:19860,comments:106,url:"https://www.xiaohongshu.com/discovery/item/687903d6000000001203dbb0",selected:true},{rank:2,title:"窑湖小镇两日一夜攻略",likes:2844,saves:3243,comments:509,url:"https://www.xiaohongshu.com/discovery/item/696201e9000000001a020cd8"},{rank:3,title:"上海一日游｜打卡经典路线（含2元轮渡）",likes:28972,saves:22902,comments:287,url:"https://www.xiaohongshu.com/discovery/item/67fb5b0400000000070363c2"},{rank:4,title:"上海｜不做攻略🟰白来❗️✅美食攻略",likes:9306,saves:10578,comments:152,url:"https://www.xiaohongshu.com/discovery/item/6843b5d4000000000f03b734"},{rank:5,title:"夏季旅游🏄♀️江浙沪周边游好去处❗️周末游",likes:5939,saves:5386,comments:87,url:"https://www.xiaohongshu.com/discovery/item/647de5c0000000001303f042"},{rank:6,title:"上海出发 | 安吉 | 溯溪纳凉 山里吸氧",likes:3885,saves:4092,comments:594,url:"https://www.xiaohongshu.com/discovery/item/687a37ad000000002400e879"},{rank:7,title:"上海人民广场citywalk一日游攻略（附路线）",likes:6279,saves:5026,comments:54,url:"https://www.xiaohongshu.com/discovery/item/689b65c0000000001c00780a"},{rank:8,title:"🚄北京-大同｜两天一夜避暑（旅游）攻略✌️",likes:2252,saves:3012,comments:90,url:"https://www.xiaohongshu.com/discovery/item/688097f0000000002203f274"},{rank:9,title:"上海1.5h｜被严重低估的冷门小城❗️人少景美",likes:3182,saves:4394,comments:132,url:"https://www.xiaohongshu.com/discovery/item/674bc5f0000000020703823e"},{rank:10,title:"迄今为止...我最喜欢的旅游小镇出现了！",likes:24211,saves:19609,comments:531,url:"https://www.xiaohongshu.com/discovery/item/69aa77ba0000000023038dea"}],selectionLogic:"评分87/100。属于'路线行程'类型，藏赞比1.02（收藏率优秀），杭州三天两晚行程与账号'上海本地+短途旅行'定位高度匹配。原文涵盖Day1西湖环线、Day2寺庙老街、Day3湿地老街完整三天行程，信息密度极高（15张手绘攻略图），客观事实清晰（景点/门票/交通/住宿），表达差异空间大。暑假时效性强。"},
+{date:"2026.07.20",keywords:["上海遛娃好去处","上海周末去哪儿","上海周边游"],searchCount:88,filteredCount:65,selectedScore:97,notes:[{rank:1,title:"仿佛在国外的江浙沪staycation 合集",likes:44259,saves:38634,comments:687,url:"https://www.xiaohongshu.com/discovery/item/68a46c4a000000021c019f2c"},{rank:2,title:"上海) 个人觉得无法超越的9️⃣个地方",likes:26668,saves:25342,comments:348,url:"https://www.xiaohongshu.com/discovery/item/6a2170320000000035039356",selected:true},{rank:3,title:"江浙沪徒步宝藏地❗️新年50+路线闭眼抄作业",likes:15243,saves:26565,comments:490,url:"https://www.xiaohongshu.com/discovery/item/67a41a9b0000000217033e5a"},{rank:4,title:"上海是一个巨大的公园▪️合集附定位",likes:29016,saves:17681,comments:807,url:"https://www.xiaohongshu.com/discovery/item/69ae5b340000000016008039"},{rank:5,title:"有娃必看！上海值得逛的23个博物馆",likes:14715,saves:17733,comments:318,url:"https://www.xiaohongshu.com/discovery/item/680e0fdb0000000022027467"},{rank:6,title:"不输迪士尼！迄今为止最爱的山野乐园",likes:14236,saves:12892,comments:1161,url:"https://www.xiaohongshu.com/discovery/item/67e2738d0000000209033a74"},{rank:7,title:"上海迪士尼全部项目测评",likes:17461,saves:16720,comments:184,url:"https://www.xiaohongshu.com/discovery/item/68dbb42a0000000004011c18"},{rank:8,title:"余华没骗我，这是江浙沪最治愈的海边小城",likes:13410,saves:15429,comments:557,url:"https://www.xiaohongshu.com/discovery/item/6856ac6a0000000022033bca"},{rank:9,title:"🎍上海1.5h达｜膝盖友好的牛马必备洗肺指南",likes:7239,saves:12833,comments:440,url:"https://www.xiaohongshu.com/discovery/item/68693f2f0000000220011096"},{rank:10,title:"30个上海最适合亲子的博物馆！",likes:9182,saves:13453,comments:270,url:"https://www.xiaohongshu.com/discovery/item/689c738d000000001c0127a1"}],selectionLogic:"评分97/100排名第一。属于\"城市体验\"类型，赞藏比95%，上海本地咖啡馆/老洋房Citywalk是高频长青方向，与账号定位高度匹配。原文9-10个地点均为上海真实可探访的咖啡馆/空间，客观事实清晰。"}];
+let vaultData=[];
 function loadCandidateHistory(){
   try {
+    // Load vault from embedded data, merge with localStorage
+    const localVault = JSON.parse(localStorage.getItem('xhs_vault') || '[]');
+    const localUrls = new Set(localVault.map(v => v.url));
+    vaultData = vaultData.filter(v => !localUrls.has(v.url)).concat(localVault);
+    
     const hist = JSON.parse(localStorage.getItem('xhs_candidates') || '[]');
     const existingDates = candidateData.map(c => c.date);
     hist.forEach(h => {
@@ -622,14 +702,7 @@ function loadCandidateHistory(){
         candidateData.unshift(h);
       }
     });
-    const now = new Date();
-    const cutoff = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-    const filtered = candidateData.filter(c => {
-      const d = new Date(c.date.replace(/\./g, '/'));
-      return d > cutoff;
-    });
-    candidateData.length = 0;
-    filtered.forEach(f => candidateData.push(f));
+    // Show all history, no 7-day cutoff
   } catch(e) { console.warn('Failed to load candidate history:', e); }
 }
 function saveCandidateHistory(){
@@ -661,12 +734,19 @@ function filterCards(f,el){currentFilter=f;document.querySelectorAll('.sub-tab')
 function renderCards(){const g=document.getElementById('cardGrid');g.innerHTML='';const f=contentData.filter(i=>currentFilter==='all'||getStatus(i.id)===currentFilter);if(!f.length){g.innerHTML='<div class="empty"><p style="font-size:2rem;margin-bottom:8px">📝</p><p>暂无内容</p></div>';return}f.forEach(i=>{const st=getStatus(i.id),img=i.images[0]||'';const b=st==='published'?'<span class="card-status status-published">已发布</span>':st==='skipped'?'<span class="card-status status-skipped">已跳过</span>':'<span class="card-status status-draft">待发布</span>';const c=document.createElement('div');c.className='card-wrapper';c.innerHTML=`${b}<div class="card" onclick="openModal('${i.id}')">${img?`<img class="card-img" src="${img}" loading="lazy">`:'<div class="card-img"></div>'}<div class="card-body"><span class="card-date">${i.date}</span><div class="card-title">${i.title}</div><div class="card-tags">${i.tags.slice(0,3).map(t=>`<span class="card-tag">${t}</span>`).join('')}</div></div></div>`;g.appendChild(c)});updateStats()}
 function updateStats(){let d=0,p=0;contentData.forEach(i=>{const s=getStatus(i.id);if(s==='draft')d++;if(s==='published')p++});document.getElementById('cntDraft').textContent=d;document.getElementById('cntPub').textContent=p;document.getElementById('cntTotal').textContent=contentData.length}
 
+let candidatePage=1;
+const candidatePageSize=5;
 function renderCandidates(){
   loadCandidateHistory();
   saveCandidateHistory();
   const l=document.getElementById('candidateList');l.innerHTML='';
   const vault = JSON.parse(localStorage.getItem('xhs_vault') || '[]');
-  candidateData.forEach(c=>{
+  const totalPages=Math.max(1,Math.ceil(candidateData.length/candidatePageSize));
+  if(candidatePage>totalPages)candidatePage=totalPages;
+  if(candidatePage<1)candidatePage=1;
+  const startIdx=(candidatePage-1)*candidatePageSize;
+  const pageData=candidateData.slice(startIdx,startIdx+candidatePageSize);
+  pageData.forEach(c=>{
     const cd=document.createElement('div');
     cd.className='candidate-card';
     cd.innerHTML=`<div class="candidate-header">
@@ -684,15 +764,15 @@ function renderCandidates(){
           const isPublished = contentData.some(d => d.title && n.title && (d.title.includes(n.title.slice(0,8)) || n.title.includes(d.title.slice(0,8))));
           let actionCell;
           if(isPublished){
-            actionCell = '<span style="color:var(--green);font-size:0.85rem">📋 已出稿</span>';
+            actionCell = '<span class="status-pill published">📋 已出稿</span>';
           } else if(inVault){
-            actionCell = '<span style="color:var(--green);font-size:0.85rem">✅ 已加入</span>';
+            actionCell = '<span class="status-pill added">✅ 已加入</span>';
           } else if(fb){
-            actionCell = `<span style="color:var(--gray);font-size:0.85rem" title="${fb.reason}">🚫 已跳过</span>`;
+            actionCell = `<span class="status-pill skipped" title="${fb.reason}">🚫 已跳过</span>`;
           } else {
-            actionCell = `<div style="display:flex;gap:4px">
-              <button class="btn-vault" onclick="addToVault('${n.url}','${n.title.replace(/'/g,"\\'")}',${n.likes},${n.saves},${n.comments},'${c.date}')" style="padding:4px 8px;font-size:0.78rem;border:1px solid var(--accent);background:transparent;color:var(--accent);border-radius:6px;cursor:pointer;white-space:nowrap">🔥 加入</button>
-              <button class="btn-skip" onclick="showSkipForm('${n.url}','${n.title.replace(/'/g,"\\'")}','${c.date}',${n.likes},${n.saves},${n.comments})" style="padding:4px 8px;font-size:0.78rem;border:1px solid var(--gray);background:transparent;color:var(--gray);border-radius:6px;cursor:pointer;white-space:nowrap">❌ 不加入</button>
+            actionCell = `<div style="display:flex;gap:6px">
+              <button class="btn-candidate btn-add" onclick="addToVault('${n.url}','${n.title.replace(/'/g,"\\'")}',${n.likes},${n.saves},${n.comments},'${c.date}')">🔥 加入</button>
+              <button class="btn-candidate btn-reject" onclick="showSkipForm('${n.url}','${n.title.replace(/'/g,"\\'")}','${c.date}',${n.likes},${n.saves},${n.comments})">❌ 不加入</button>
             </div>`;
           }
           return `<tr class="${n.selected?'candidate-selected':''}">
@@ -710,13 +790,44 @@ function renderCandidates(){
     </div>`;
     l.appendChild(cd);
   });
+  // Pagination controls
+  const pg=document.createElement('div');
+  pg.className='pagination';
+  let pageBtns='';
+  // Prev button
+  pageBtns+=`<button class="btn-page nav-btn" onclick="candidatePage--;renderCandidates()" ${candidatePage<=1?'disabled':''}>‹ 上一页</button>`;
+  // Page number buttons (show max 7 pages, with ellipsis)
+  const maxVisible=7;
+  if(totalPages<=maxVisible){
+    for(let i=1;i<=totalPages;i++){
+      pageBtns+=`<button class="btn-page ${i===candidatePage?'active':''}" onclick="candidatePage=${i};renderCandidates()">${i}</button>`;
+    }
+  } else {
+    // Always show first page
+    pageBtns+=`<button class="btn-page ${1===candidatePage?'active':''}" onclick="candidatePage=1;renderCandidates()">1</button>`;
+    let start=Math.max(2,candidatePage-2);
+    let end=Math.min(totalPages-1,candidatePage+2);
+    if(start>2) pageBtns+='<span class="page-info">...</span>';
+    for(let i=start;i<=end;i++){
+      pageBtns+=`<button class="btn-page ${i===candidatePage?'active':''}" onclick="candidatePage=${i};renderCandidates()">${i}</button>`;
+    }
+    if(end<totalPages-1) pageBtns+='<span class="page-info">...</span>';
+    pageBtns+=`<button class="btn-page ${totalPages===candidatePage?'active':''}" onclick="candidatePage=${totalPages};renderCandidates()">${totalPages}</button>`;
+  }
+  // Next button
+  pageBtns+=`<button class="btn-page nav-btn" onclick="candidatePage++;renderCandidates()" ${candidatePage>=totalPages?'disabled':''}>下一页 ›</button>`;
+  pg.innerHTML=pageBtns;
+  l.appendChild(pg);
 }
 
 function addToVault(url, title, likes, saves, comments, date){
   const vault = JSON.parse(localStorage.getItem('xhs_vault') || '[]');
   if(!vault.some(v => v.url === url)){
-    vault.push({url, title, likes, saves, comments, date, addedAt: new Date().toISOString()});
+    const item = {url, title, likes, saves, comments, date, addedAt: new Date().toISOString()};
+    vault.push(item);
+    vaultData.push(item);
     localStorage.setItem('xhs_vault', JSON.stringify(vault));
+    document.getElementById('vaultSyncBadge')?.classList.add('show');
   }
   renderCandidates();
 }
@@ -732,18 +843,18 @@ function showSkipForm(url, title, date, likes, saves, comments){
   const noteId = url.split('/').pop().split('?')[0].split('#')[0];
   
   const form = document.createElement('div');
-  form.style.cssText = 'background:#fff;border-radius:12px;padding:24px;max-width:480px;width:90%;box-shadow:0 8px 32px rgba(0,0,0,0.2)';
+  form.style.cssText = 'background:#fff;border-radius:16px;padding:24px;max-width:480px;width:90%;box-shadow:0 8px 32px rgba(0,0,0,0.2)';
   form.innerHTML = `
     <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:16px">
       <div>
         <div style="font-weight:700;font-size:1rem;margin-bottom:4px">❌ 不加入候选</div>
         <div style="font-size:0.85rem;color:var(--gray);max-width:380px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${title}</div>
       </div>
-      <button onclick="this.closest('.skip-form-overlay').remove()" style="border:none;background:none;font-size:1.2rem;cursor:pointer;color:var(--gray)">✕</button>
+      <button onclick="this.closest('.skip-form-overlay').remove()" style="border:none;background:none;font-size:1.2rem;cursor:pointer;color:var(--gray);padding:4px 8px">✕</button>
     </div>
     <div style="margin-bottom:12px">
       <label style="font-size:0.85rem;color:var(--gray);display:block;margin-bottom:6px">跳过原因分类</label>
-      <select id="skipCategory" style="width:100%;padding:8px 12px;border:1px solid #ddd;border-radius:6px;font-size:0.9rem">
+      <select id="skipCategory" style="width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:8px;font-size:0.9rem;background:#fff">
         <option value="title_issue">标题问题（太长/不够吸引人）</option>
         <option value="content_issue">文案问题（风格/结构不搭）</option>
         <option value="image_issue">图片问题（生图风格不搭）</option>
@@ -755,11 +866,11 @@ function showSkipForm(url, title, date, likes, saves, comments){
     </div>
     <div style="margin-bottom:16px">
       <label style="font-size:0.85rem;color:var(--gray);display:block;margin-bottom:6px">具体原因（选填）</label>
-      <textarea id="skipReason" placeholder="比如：标题太长且没有钩子，图片风格偏精修不适合账号调性..." style="width:100%;padding:8px 12px;border:1px solid #ddd;border-radius:6px;font-size:0.9rem;min-height:80px;resize:vertical;font-family:inherit"></textarea>
+      <textarea id="skipReason" placeholder="比如：标题太长且没有钩子，图片风格偏精修不适合账号调性..." style="width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:8px;font-size:0.9rem;min-height:80px;resize:vertical;font-family:inherit;background:#fff"></textarea>
     </div>
     <div style="display:flex;gap:8px;justify-content:flex-end">
-      <button onclick="this.closest('.skip-form-overlay').remove()" style="padding:8px 16px;border:1px solid #ddd;background:#fff;border-radius:6px;cursor:pointer;font-size:0.9rem">取消</button>
-      <button id="submitSkip" style="padding:8px 16px;border:none;background:var(--gray);color:#fff;border-radius:6px;cursor:pointer;font-size:0.9rem">确认跳过</button>
+      <button class="btn-candidate btn-reject" onclick="this.closest('.skip-form-overlay').remove()">取消</button>
+      <button class="btn-candidate btn-add" id="submitSkip">确认跳过</button>
     </div>
   `;
   overlay.appendChild(form);
@@ -787,8 +898,27 @@ function showSkipForm(url, title, date, likes, saves, comments){
   overlay.onclick = function(e){ if(e.target === overlay) overlay.remove(); };
 }
 
-function renderVault(){
+
+function exportVault(){
   const vault = JSON.parse(localStorage.getItem('xhs_vault') || '[]');
+  if(!vault.length){alert('爆文库是空的');return;}
+  const data = JSON.stringify(vault, null, 2);
+  const blob = new Blob([data], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'vault.json';
+  a.click();
+  URL.revokeObjectURL(a.href);
+  // Hide badge after export
+  document.getElementById('vaultSyncBadge')?.classList.remove('show');
+  alert('vault.json 已下载！\n请把文件发到飞书群里，我会自动同步到服务端。');
+}
+
+function renderVault(){
+  // Merge embedded vaultData with localStorage
+  const localVault = JSON.parse(localStorage.getItem('xhs_vault') || '[]');
+  const localUrls = new Set(localVault.map(v => v.url));
+  const vault = vaultData.filter(v => !localUrls.has(v.url)).concat(localVault);
   const feedback = JSON.parse(localStorage.getItem('xhs_feedback') || '[]');
   const l = document.getElementById('vaultList');
   if(!vault.length && !feedback.length){
@@ -798,7 +928,7 @@ function renderVault(){
   let html = '<div style="display:flex;gap:12px;align-items:center;margin-bottom:16px">';
   html += '<span style="color:var(--gray);font-size:0.9rem">🔥 爆文库 ' + vault.length + ' 篇 · 🚫 跳过 ' + feedback.length + ' 篇</span>';
   if(feedback.length){
-    html += '<button class="btn-skip" onclick="exportFeedback()" style="padding:4px 10px;font-size:0.78rem;border:1px solid var(--gray);background:transparent;color:var(--gray);border-radius:6px;cursor:pointer">📥 导出跳过原因</button>';
+    html += '<button class="btn-candidate btn-reject" onclick="exportFeedback()">📥 导出跳过原因</button>';
   }
   html += '</div>';
   l.innerHTML = html;
@@ -820,7 +950,12 @@ function renderVault(){
 
 function removeFromVault(index){
   const vault = JSON.parse(localStorage.getItem('xhs_vault') || '[]');
-  vault.splice(index, 1);
+  const removed = vault.splice(index, 1);
+  // Also remove from vaultData
+  if(removed[0]){
+    const idx2 = vaultData.findIndex(v => v.url === removed[0].url);
+    if(idx2 >= 0) vaultData.splice(idx2, 1);
+  }
   localStorage.setItem('xhs_vault', JSON.stringify(vault));
   renderVault();
 }
