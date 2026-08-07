@@ -905,19 +905,71 @@ function showSkipForm(url, title, date, likes, saves, comments){
 }
 
 
-function exportVault(){
+function exportVault(){ syncToServer(); }
+function exportFeedback(){ syncToServer(); }
+
+function syncToServer(){
   const vault = JSON.parse(localStorage.getItem('xhs_vault') || '[]');
-  if(!vault.length){alert('爆文库是空的');return;}
-  const data = JSON.stringify(vault, null, 2);
-  const blob = new Blob([data], {type:'application/json'});
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'vault.json';
-  a.click();
-  URL.revokeObjectURL(a.href);
-  // Hide badge after export
+  const feedback = JSON.parse(localStorage.getItem('xhs_feedback') || '[]');
+  if(!vault.length && !feedback.length){alert('爆文库和跳过列表都是空的，无需同步');return;}
+  
+  const payload = {
+    vault: vault.map(v => ({
+      url: v.url, title: v.title, likes: v.likes||0, saves: v.saves||0,
+      comments: v.comments||0, date: v.date||'', addedAt: v.addedAt||''
+    })),
+    feedback: feedback.map(f => ({
+      url: f.url, title: f.title, date: f.date||'',
+      category: f.category||'other', reason: f.reason||'',
+      likes: f.likes||0, saves: f.saves||0, comments: f.comments||0,
+      noteId: f.noteId||'', addedAt: f.addedAt||''
+    })),
+    syncedAt: new Date().toISOString()
+  };
+  
+  // Compact JSON → base64
+  const jsonStr = JSON.stringify(payload);
+  let b64 = btoa(unescape(encodeURIComponent(jsonStr)));
+  // Split into chunks of 50000 chars to avoid message length limits
+  const chunks = [];
+  for(let i=0; i<b64.length; i+=50000){
+    chunks.push(b64.slice(i, i+50000));
+  }
+  
+  const syncText = 'XHS_SYNC:' + chunks.length + ':' + chunks.join('');
+  
+  // Copy to clipboard
+  const ta = document.createElement('textarea');
+  ta.value = syncText;
+  ta.style.position = 'fixed';
+  ta.style.opacity = '0';
+  document.body.appendChild(ta);
+  ta.select();
+  try { document.execCommand('copy'); } catch(e){}
+  document.body.removeChild(ta);
+  
+  // Also try clipboard API
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(syncText).catch(()=>{});
+  }
+  
+  // Hide badge
   document.getElementById('vaultSyncBadge')?.classList.remove('show');
-  alert('vault.json 已下载！\n请把文件发到飞书群里，我会自动同步到服务端。');
+  
+  // Show toast
+  const toast = document.createElement('div');
+  toast.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#1a1a1a;color:#fff;padding:24px 32px;border-radius:16px;z-index:99999;box-shadow:0 8px 32px rgba(0,0,0,0.3);text-align:center;max-width:360px';
+  toast.innerHTML = `
+    <div style="font-size:2rem;margin-bottom:8px">📋</div>
+    <div style="font-weight:700;font-size:1rem;margin-bottom:8px">同步数据已复制！</div>
+    <div style="font-size:0.85rem;color:#aaa;line-height:1.5">
+      爆文库 ${vault.length} 篇 · 跳过 ${feedback.length} 篇<br><br>
+      请到飞书群里<b style="color:#ff9500">粘贴并发送</b><br>我会自动解析并更新服务端数据库
+    </div>
+    <button onclick="this.parentElement.remove()" style="margin-top:14px;padding:6px 20px;border:1px solid #444;background:transparent;color:#fff;border-radius:8px;cursor:pointer;font-size:0.85rem">知道了</button>
+  `;
+  document.body.appendChild(toast);
+  setTimeout(()=>toast.remove(), 10000);
 }
 
 function renderVault(){
@@ -938,7 +990,7 @@ function renderVault(){
   header += '<span style="font-size:0.8rem;color:var(--gray)">共 ' + vault.length + ' 篇笔记</span>';
   if(feedback.length){
     header += '<span style="font-size:0.8rem;color:var(--gray)">· 🚫 已跳过 ' + feedback.length + ' 篇</span>';
-    header += '<button class="btn-candidate btn-reject" onclick="exportFeedback()">📥 导出跳过原因</button>';
+    header += '<button class="btn-candidate btn-add" onclick="syncToServer()" style="background:var(--orange);color:#fff">📤 一键同步到服务端</button>';
   }
   header += '</div>';
   l.innerHTML = header;
@@ -978,26 +1030,7 @@ function removeFromVault(index){
   renderVault();
 }
 
-function exportFeedback(){
-  const feedback = JSON.parse(localStorage.getItem('xhs_feedback') || '[]');
-  if(!feedback.length) return;
-  let yaml = '# 跳过原因导出\n# 导出时间: ' + new Date().toISOString() + '\n\nskip_rules:\n';
-  feedback.forEach(f => {
-    yaml += `  - date: "${f.date || f.addedAt?.slice(0,10) || ''}"\n`;
-    yaml += `    note_title: "${(f.title||'').replace(/"/g,'\\"')}"\n`;
-    yaml += `    note_id: "${f.noteId || ''}"\n`;
-    yaml += `    url: "${f.url || ''}"\n`;
-    yaml += `    layer: "${f.layer || ''}"\n`;
-    yaml += `    reason: "${(f.reason||'').replace(/"/g,'\\"')}"\n`;
-    yaml += `    category: "${f.category || 'other'}"\n`;
-  });
-  const blob = new Blob([yaml], {type:'text/yaml'});
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'feedback-rules.yaml';
-  a.click();
-  URL.revokeObjectURL(a.href);
-}
+function exportFeedback(){ syncToServer(); }
 
 renderCards();renderTracker();
 
