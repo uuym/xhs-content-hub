@@ -1076,9 +1076,9 @@ function removeFromVault(index){
 
 function exportFeedback(){ syncToServer(); }
 
-renderCards();renderTracker();
-
 let trackerFilter='all';
+
+renderCards();renderTracker();
 function filterTracker(f,el){trackerFilter=f;document.querySelectorAll('#view-tracker .sub-tab').forEach(t=>t.classList.remove('active'));if(el)el.classList.add('active');renderTracker()}
 function renderTracker(){const tb=document.getElementById('trackerBody');tb.innerHTML='';contentData.forEach(i=>{const st=getStatus(i.id);if(trackerFilter!=='all'&&st!==trackerFilter)return;const lk=getPubLink(i.id),reason=getReason(i.id),m=i.metrics||{};const bg=st==='published'?'<span class="badge" style="background:var(--green);white-space:nowrap">已发布</span>':st==='skipped'?'<span class="badge" style="background:var(--gray);white-space:nowrap">已跳过</span>':'<span class="badge" style="background:var(--orange);white-space:nowrap">待发布</span>';tb.innerHTML+=`<tr><td style="white-space:nowrap">${i.publishedAt||i.date}</td><td style="max-width:400px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${i.title}</td><td>${bg}</td><td>${lk?`<a href="${lk}" target="_blank" style="color:var(--accent)">查看</a>`:'—'}</td><td>${m.likes??'—'}</td><td>${m.saves??'—'}</td><td>${m.comments??'—'}</td><td style="white-space:nowrap">${m.updatedAt||reason||'—'}</td></tr>`})}
 
