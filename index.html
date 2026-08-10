@@ -411,7 +411,7 @@ Day2：半屏大桥→半屏山→海上月堤→望海楼→返程
 3. 想拍空一点的画面，半屏山和渔村都建议早去
 4. 住七彩洞头村附近最方便，出门就是海
 
-如果最近真的很想离开工位一下，洞头这种不用太折腾的海边小城，很适合周末短暂出逃。`,tags:["#周末去哪儿","#江浙沪周边游","#海边旅行","#温州洞头","#小众旅行地","#周末去哪玩","#海岛攻略","#短途旅行"],images:["./assets/0808/01.jpg","./assets/0808/02.jpg","./assets/0808/03.jpg","./assets/0808/04.jpg","./assets/0808/05.jpg","./assets/0808/06.jpg","./assets/0808/07.jpg","./assets/0808/08.jpg"],zip:"./assets/zips/0730.zip",imgCaptions:["七彩洞头村","海上阳台日落","七彩网红巷","半屏山断崖","海上月堤","望海楼海景"]},
+如果最近真的很想离开工位一下，洞头这种不用太折腾的海边小城，很适合周末短暂出逃。`,tags:["#周末去哪儿","#江浙沪周边游","#海边旅行","#温州洞头","#小众旅行地","#周末去哪玩","#海岛攻略","#短途旅行"],images:["./assets/0808/01.jpg","./assets/0808/02.jpg","./assets/0808/03.jpg","./assets/0808/04.jpg","./assets/0808/05.jpg","./assets/0808/06.jpg","./assets/0808/07.jpg","./assets/0808/08.jpg"],zip:"./assets/zips/0730.zip",status:"published",link:"https://www.xiaohongshu.com/discovery/item/6a7005a10000000005023159",publishedAt:"2026-08-03 11:06",metrics:{likes:6,saves:4,comments:0,shares:0,updatedAt:"2026-08-10 17:00"},imgCaptions:["七彩洞头村","海上阳台日落","七彩网红巷","半屏山断崖","海上月堤","望海楼海景"]},
 {id:"0728dongye",date:"2026.07.28",status:"published",publishedAt:"2026-08-03 11:06",link:"https://www.xiaohongshu.com/discovery/item/6a7005a10000000005023159",metrics:{likes:6,saves:4,comments:0,shares:0,updatedAt:"2026-08-09 18:00"},title:"再见了，东野圭吾",body:`7月23日，东野圭吾因大肠癌去世，享年68岁。
 
 看到消息的时候愣了很久。
@@ -1029,7 +1029,21 @@ function renderVault(){
     const item = document.createElement('div');
     item.className = 'vault-item';
     // Check if this vault item has been replicated in contentData
-    const replicated = contentData.some(c => c.vaultUrl === v.url || (c.title && v.title && c.title === v.title));
+    // Check if vault note has been used: match by URL in candidateData sourceUrl, or by title similarity
+    const vaultTitleKey = (v.title||'').replace(/[^一-龥a-z0-9]/gi,'').toLowerCase().substring(0,8);
+    const replicated = contentData.some(c => {
+      // Direct URL match
+      if(c.vaultUrl === v.url) return true;
+      // Check candidateData for this vault URL
+      const inCand = candidateData.some(cd => cd.notes?.some(n => n.url === v.url && n.selected));
+      if(inCand) return true;
+      // Title keyword match (first 8 chars of meaningful text)
+      const cTitleKey = (c.title||'').replace(/[^一-龥a-z0-9]/gi,'').toLowerCase().substring(0,8);
+      if(vaultTitleKey && cTitleKey && vaultTitleKey === cTitleKey) return true;
+      // Check if vault title appears in content body
+      if(c.body && v.title && c.body.includes(v.title.substring(0,6))) return true;
+      return false;
+    });
     const repBadge = replicated ? '<span class="badge" style="background:var(--green);white-space:nowrap;margin-left:8px">✅ 已复刻</span>' : '';
     item.innerHTML = `
       <div class="vault-item-rank">${i+1}</div>
