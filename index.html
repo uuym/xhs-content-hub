@@ -503,19 +503,30 @@ function syncToServer(){
 }
 
 function renderVault(){
+  // Auto-upgrade old localStorage format (v1 had no version tag)
+  const VAULT_VERSION = 2;
+  const storedVersion = localStorage.getItem('xhs_vault_version');
+  if(storedVersion !== String(VAULT_VERSION)){
+    localStorage.setItem('xhs_vault', JSON.stringify(vaultData));
+    localStorage.setItem('xhs_vault_version', String(VAULT_VERSION));
+  }
   // Merge embedded vaultData with localStorage
-  // localStorage entries inherit replicated flag from vaultData if same URL
+  // Match by note_id (extracted from URL) to handle different query params
+  // Also force-upgrade old localStorage entries to new format
   const localVault = JSON.parse(localStorage.getItem('xhs_vault') || '[]');
+  const getNoteId = url => { try { return url.split('item/')[1].split('?')[0]; } catch(e) { return url; } };
   const vaultMap = new Map();
   // Start with embedded vaultData (has replicated field)
-  vaultData.forEach(v => vaultMap.set(v.url, {...v}));
-  // Override/add with localStorage entries, but preserve replicated if local doesn't have it
+  vaultData.forEach(v => vaultMap.set(getNoteId(v.url), {...v}));
+  // Merge localStorage entries
   localVault.forEach(lv => {
-    const existing = vaultMap.get(lv.url);
+    const nid = getNoteId(lv.url || '');
+    const existing = vaultMap.get(nid);
     if(existing) {
-      vaultMap.set(lv.url, {...existing, ...lv, replicated: existing.replicated || lv.replicated || false});
+      // Keep server data but update with any local-only fields
+      vaultMap.set(nid, {...existing, ...lv, replicated: existing.replicated || lv.replicated || false});
     } else {
-      vaultMap.set(lv.url, lv);
+      vaultMap.set(nid, lv);
     }
   });
   const vault = Array.from(vaultMap.values());
@@ -548,20 +559,22 @@ function renderVault(){
     // Priority 2: runtime matching against contentData
     let replicated = v.replicated === true;
     if(!replicated){
+      const vNoteId = getNoteId(v.url || '');
       const vaultTitleKey = (v.title||'').replace(/[^一-龥a-z0-9]/gi,'').toLowerCase().substring(0,8);
       replicated = contentData.some(c => {
         if(c.vaultUrl === v.url) return true;
-        const inCand = candidateData.some(cd => cd.notes?.some(n => n.url === v.url && n.selected));
+        if(c.source && c.source.url){
+          const cNoteId = getNoteId(c.source.url);
+          if(cNoteId && cNoteId === vNoteId) return true;
+        }
+        const inCand = candidateData.some(cd => cd.notes && cd.notes.some(n => {
+          if(n.selected && n.url) return getNoteId(n.url) === vNoteId;
+          return false;
+        }));
         if(inCand) return true;
         const cTitleKey = (c.title||'').replace(/[^一-龥a-z0-9]/gi,'').toLowerCase().substring(0,8);
         if(vaultTitleKey && cTitleKey && vaultTitleKey === cTitleKey) return true;
         if(c.body && v.title && c.body.includes(v.title.substring(0,6))) return true;
-        // Check source URL match
-        if(c.source && c.source.url && v.url){
-          const cSrcId = c.source.url.split('item/')[1]?.split('?')[0];
-          const vId = v.url.split('item/')[1]?.split('?')[0];
-          if(cSrcId && vId && cSrcId === vId) return true;
-        }
         return false;
       });
     }
