@@ -504,9 +504,21 @@ function syncToServer(){
 
 function renderVault(){
   // Merge embedded vaultData with localStorage
+  // localStorage entries inherit replicated flag from vaultData if same URL
   const localVault = JSON.parse(localStorage.getItem('xhs_vault') || '[]');
-  const localUrls = new Set(localVault.map(v => v.url));
-  const vault = vaultData.filter(v => !localUrls.has(v.url)).concat(localVault);
+  const vaultMap = new Map();
+  // Start with embedded vaultData (has replicated field)
+  vaultData.forEach(v => vaultMap.set(v.url, {...v}));
+  // Override/add with localStorage entries, but preserve replicated if local doesn't have it
+  localVault.forEach(lv => {
+    const existing = vaultMap.get(lv.url);
+    if(existing) {
+      vaultMap.set(lv.url, {...existing, ...lv, replicated: existing.replicated || lv.replicated || false});
+    } else {
+      vaultMap.set(lv.url, lv);
+    }
+  });
+  const vault = Array.from(vaultMap.values());
   // Sort by likes descending
   vault.sort((a,b) => (b.likes||0) - (a.likes||0));
   const feedback = JSON.parse(localStorage.getItem('xhs_feedback') || '[]');
