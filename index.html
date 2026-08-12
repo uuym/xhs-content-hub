@@ -531,22 +531,28 @@ function renderVault(){
     const dateStr = v.addedAt ? v.addedAt.slice(0,10) : (v.date || '—');
     const item = document.createElement('div');
     item.className = 'vault-item';
-    // Check if this vault item has been replicated in contentData
-    // Check if vault note has been used: match by URL in candidateData sourceUrl, or by title similarity
-    const vaultTitleKey = (v.title||'').replace(/[^一-龥a-z0-9]/gi,'').toLowerCase().substring(0,8);
-    const replicated = contentData.some(c => {
-      // Direct URL match
-      if(c.vaultUrl === v.url) return true;
-      // Check candidateData for this vault URL
-      const inCand = candidateData.some(cd => cd.notes?.some(n => n.url === v.url && n.selected));
-      if(inCand) return true;
-      // Title keyword match (first 8 chars of meaningful text)
-      const cTitleKey = (c.title||'').replace(/[^一-龥a-z0-9]/gi,'').toLowerCase().substring(0,8);
-      if(vaultTitleKey && cTitleKey && vaultTitleKey === cTitleKey) return true;
-      // Check if vault title appears in content body
-      if(c.body && v.title && c.body.includes(v.title.substring(0,6))) return true;
-      return false;
-    });
+    // Check if this vault item has been replicated
+    // Priority 1: pre-computed replicated field from server
+    // Priority 2: runtime matching against contentData
+    let replicated = v.replicated === true;
+    if(!replicated){
+      const vaultTitleKey = (v.title||'').replace(/[^一-龥a-z0-9]/gi,'').toLowerCase().substring(0,8);
+      replicated = contentData.some(c => {
+        if(c.vaultUrl === v.url) return true;
+        const inCand = candidateData.some(cd => cd.notes?.some(n => n.url === v.url && n.selected));
+        if(inCand) return true;
+        const cTitleKey = (c.title||'').replace(/[^一-龥a-z0-9]/gi,'').toLowerCase().substring(0,8);
+        if(vaultTitleKey && cTitleKey && vaultTitleKey === cTitleKey) return true;
+        if(c.body && v.title && c.body.includes(v.title.substring(0,6))) return true;
+        // Check source URL match
+        if(c.source && c.source.url && v.url){
+          const cSrcId = c.source.url.split('item/')[1]?.split('?')[0];
+          const vId = v.url.split('item/')[1]?.split('?')[0];
+          if(cSrcId && vId && cSrcId === vId) return true;
+        }
+        return false;
+      });
+    }
     const repBadge = replicated ? '<span class="badge" style="background:var(--green);white-space:nowrap;margin-left:8px">✅ 已复刻</span>' : '';
     item.innerHTML = `
       <div class="vault-item-rank">${i+1}</div>
