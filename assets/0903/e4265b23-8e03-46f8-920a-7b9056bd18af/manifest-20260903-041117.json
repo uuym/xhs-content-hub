@@ -1,0 +1,23 @@
+{
+  "task_id": "e4265b23-8e03-46f8-920a-7b9056bd18af",
+  "status": "succeeded",
+  "saved_at": "2026-09-03T04:11:17.130Z",
+  "files": [
+    {
+      "path": "task-artifact-0.png",
+      "source": "task",
+      "artifact_index": 0,
+      "url": "https://cdn-image.cdn.bcebos.com/uploads/2026/09/03/3ff9a6bdca244ded8e4fbf94dd3a2f46.png",
+      "mime_type": "image/png"
+    },
+    {
+      "path": "item-0-artifact-0.png",
+      "source": "item",
+      "item_id": "5fd8e20f-2d1c-4c6a-a168-900031aa97d2",
+      "position": 0,
+      "artifact_index": 0,
+      "url": "https://cdn-image.cdn.bcebos.com/uploads/2026/09/03/3ff9a6bdca244ded8e4fbf94dd3a2f46.png",
+      "mime_type": "image/png"
+    }
+  ]
+}
