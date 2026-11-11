@@ -870,9 +870,24 @@ function openModal(id){
   document.getElementById('modalOverlay').classList.add('active');
 }
 
+const FEISHU_FORM='https://noumena-corp.feishu.cn/share/base/shrcnz5rMyQeGHC8U423jVHzbqe';
+window.FEISHU_WEBHOOK=window.FEISHU_WEBHOOK||'';  /* 填飞书群机器人 webhook 即为全自动 */
+function pushReviewToFeishu(item,decision,reason){
+  if(!item) return;
+  const text='【'+item.date+'】'+item.title+'\n结论：'+decision+'\n理由：'+(reason||'—');
+  if(window.FEISHU_WEBHOOK){
+    try{fetch(window.FEISHU_WEBHOOK,{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({msg_type:'text',content:{text:text}})});}catch(e){}
+    return;
+  }
+  try{navigator.clipboard&&navigator.clipboard.writeText(text);}catch(e){}
+  window.open(FEISHU_FORM,'_blank');
+}
 function confirmAction(id,st){
   const reason=document.getElementById(`reasonInput-${id}`)?.value||'';
   setStatusWithReason(id,st,reason);
+  const item=contentData.find(d=>d.id===id);
+  if(item&&(item.account||'大月月')==='mia') pushReviewToFeishu(item, st==='published'?'通过':'不通过', reason);
   closeModal();renderCards();renderTracker();
 }
 
