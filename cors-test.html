@@ -1,0 +1,7 @@
+<!doctype html><html><head><meta charset="utf-8"><title>pending</title></head><body>
+<script>
+fetch('https://open.feishu.cn/open-apis/bot/v2/hook/6ff8e42e-20f0-4427-a86c-7bdf2ecc14a8',{
+  method:'POST',headers:{'Content-Type':'application/json'},
+  body:JSON.stringify({msg_type:'text',content:{text:'CORS 测试（可忽略，不入表）'}})
+}).then(r=>r.text()).then(t=>{document.title='OK '+t.slice(0,80);}).catch(e=>{document.title='ERR '+e.message;});
+</script></body></html>
